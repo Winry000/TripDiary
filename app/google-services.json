@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "819792709146",
+    "firebase_url": "https://tripapp-97490.firebaseio.com",
+    "project_id": "tripapp-97490",
+    "storage_bucket": "tripapp-97490.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819792709146:android:1d856f3f5db5da0d",
+        "android_client_info": {
+          "package_name": "com.example.winryxie.tripdiary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819792709146-coaam8h4pmkm7b6sgckbcp8l0cvosdeu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.winryxie.tripdiary",
+            "certificate_hash": "e2d022c2c118e939fab7ceedcc5fc3caef9fb845"
+          }
+        },
+        {
+          "client_id": "819792709146-jbrb730f9im2rue8hcu7i6godubehks2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBm0XaGhGmnz6mDNHRVvjHyBl0KZ07N9nc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819792709146-jbrb730f9im2rue8hcu7i6godubehks2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

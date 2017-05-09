@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TripDiary</string>
+    <string name="title_activity_signup">SignupActivity</string>
+</resources>

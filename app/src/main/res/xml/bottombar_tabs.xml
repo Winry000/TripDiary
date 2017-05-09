@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tabs>
+    <tab
+        icon="@drawable/ic_youtube_searched_for_black_24dp"
+        id="@+id/nav_search"
+        title="Search" />
+    <tab
+        icon="@drawable/ic_person_pin_circle_black_24dp"
+        id="@+id/nav_map"
+        title="Map" />
+    <tab
+        icon="@drawable/ic_camera_alt_black_24dp"
+        id="@+id/nav_camera"
+        title="Camera" />
+    <tab
+        icon="@drawable/ic_favorite_black_24dp"
+        id="@+id/nav_favoriate"
+        title="Favoriate" />
+    <tab
+        icon="@drawable/ic_assignment_turned_in_black_24dp"
+        id="@+id/nav_diary"
+        title="Diary" />
+</tabs>
