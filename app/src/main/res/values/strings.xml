@@ -5,5 +5,7 @@
     <string name="title">My Description</string>
     <string name="context_menu">Context menu</string>
     <string name="need_permissions">need permission</string>
-    need_permissions
+    <string name="cancel">CANCEL</string>
+    <string name="ok">OK</string>
+    <string name="enter_location_hint">Enter location</string>
 </resources>

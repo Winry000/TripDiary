@@ -1,4 +1,4 @@
-package com.example.winryxie.tripdiary;
+package com.example.winryxie.tripdiary.Fragments;
 
 /**
  * Created by Dora on 5/10/17.

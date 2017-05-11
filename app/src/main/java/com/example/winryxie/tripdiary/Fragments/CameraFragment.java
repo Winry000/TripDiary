@@ -1,23 +1,16 @@
 package com.example.winryxie.tripdiary.Fragments;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -26,29 +19,48 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.util.Log;
 
-import com.codemybrainsout.placesearch.PlaceSearchDialog;
-import com.example.winryxie.tripdiary.GPSTracker;
-import com.example.winryxie.tripdiary.ImageUpload;
-import com.example.winryxie.tripdiary.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.example.winryxie.tripdiary.R;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+
 import com.mapzen.places.api.LatLng;
 import com.mapzen.places.api.LatLngBounds;
 import com.mapzen.places.api.Place;
 import com.mapzen.places.api.ui.PlacePicker;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.location.LocationManager;
+import android.location.Location;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import android.view.MotionEvent;
+import com.example.winryxie.tripdiary.*;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -56,7 +68,8 @@ import static android.app.Activity.RESULT_OK;
  * Created by winryxie on 5/4/17.
  */
 
-public class CameraFragment extends Fragment implements View.OnClickListener{
+public class CameraFragment extends Fragment implements View.OnClickListener,  GoogleApiClient.OnConnectionFailedListener{
+
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private ImageView imageView;
@@ -72,8 +85,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private double currentlog = 0;
     private double currentlat = 0;
     private String location;
-
-    private String UserPackage;
+    protected GoogleApiClient mGoogleApiClient;
 
     public static final String FB_STORAGE_PATH = "image/";
     public static final String FB_DATABASE_PATH = "image";
@@ -84,11 +96,40 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private static final int PERMISSIONS_REQUEST_CODE = 1;
     private static final int NUMBER_OF_PERMISSIONS = 1;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addOnConnectionFailedListener(this)
+                .addApi(Places.GEO_DATA_API)
+                .build();
+
+        Log.d("DEBUG", "onCreate");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected())
+            mGoogleApiClient.disconnect();
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.camera,container,false);
-        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
 
@@ -127,11 +168,41 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                         editLocation.setText(locationName);
 
                     }
+                    public void placeId(String placeId) {
+                        PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                                .getPlaceById(mGoogleApiClient, placeId);
+                        placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+                        Log.i("DEBUG", "Called getPlaceById to get Place details for " + placeId);
+                    }
 
                 })
                 .build();
         placeSearchDialog.show();
     }
+
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                // Request did not complete successfully
+                Log.e("DEBUG", "Place query did not complete. Error: " + places.getStatus().toString());
+                places.release();
+                return;
+            }
+            // Get the Place object from the buffer.
+            final com.google.android.gms.location.places.Place place = places.get(0);
+
+            // Format details of the place for display and show it in a TextView.
+            lat = place.getLatLng().latitude;
+            log = place.getLatLng().longitude;
+            location = place.getName().toString();
+
+            Log.i("DEBUG", "Place details received: " + place.getName());
+
+            places.release();
+        }
+    };
 
     public void Select_Click(View v) {
 
@@ -152,12 +223,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 if (resultCode == RESULT_OK) {
                     Place place = PlacePicker.getPlace(this.getContext(), data);
                     Log.i("DEBUG", Double.toString(place.getLatLng().getLatitude()) + " " +Double.toString(place.getLatLng().getLongitude()));
-                   // Toast.makeText(this.getContext(), place.getLatLng().toString(),
-                            //Toast.LENGTH_SHORT).show();
                     log = place.getLatLng().getLongitude();
                     lat = place.getLatLng().getLatitude();
                     location = place.getName().toString();
-                    LatLngBounds bounds = PlacePicker.getLatLngBounds(data);
                     editLocation.setText(location);
 
                 }
@@ -207,9 +275,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                     SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                     String formattedDate = df.format(c.getTime());
 
-                    ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), location, log,lat,formattedDate );
+                    ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), editLocation.getText().toString(), log,lat,formattedDate );
                     //save the imginfo to firedatabase
-                    databaseReference = databaseReference.child(UserPackage);
                     String uploadId = databaseReference.push().getKey();
                     databaseReference.child(uploadId).setValue(imageupload);
                 }
@@ -314,7 +381,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         LatLng northeast = new LatLng(currentlat - 1.0000, currentlog - 1.0000);
 
         Intent intent = new PlacePicker.IntentBuilder()
-                .setLatLngBounds(new LatLngBounds(southwest, northeast))
+                //.setLatLngBounds(new LatLngBounds(southwest, northeast))
                 .build(this.getActivity());
 
         isPickingPlace = true;
@@ -327,6 +394,19 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
         Toast.makeText(this.getContext(), getString(R.string.need_permissions),
                 Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+        Log.e("DEBUG", "onConnectionFailed: ConnectionResult.getErrorCode() = "
+                + connectionResult.getErrorCode());
+
+        // TODO(Developer): Check error code and notify the user of error state and resolution.
+        Toast.makeText(this.getContext(),
+                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
+                Toast.LENGTH_SHORT).show();
+    }
+
 }
 
 
