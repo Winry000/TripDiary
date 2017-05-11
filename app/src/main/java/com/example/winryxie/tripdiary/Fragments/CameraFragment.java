@@ -1,16 +1,23 @@
 package com.example.winryxie.tripdiary.Fragments;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
@@ -19,8 +26,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.util.Log;
 
+import com.codemybrainsout.placesearch.PlaceSearchDialog;
+import com.example.winryxie.tripdiary.GPSTracker;
 import com.example.winryxie.tripdiary.ImageUpload;
 import com.example.winryxie.tripdiary.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,30 +40,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
-
 import com.mapzen.places.api.LatLng;
 import com.mapzen.places.api.LatLngBounds;
 import com.mapzen.places.api.Place;
 import com.mapzen.places.api.ui.PlacePicker;
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.location.LocationManager;
-import android.location.Location;
-import com.codemybrainsout.placesearch.PlaceSearchDialog;
-import android.view.MotionEvent;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -73,16 +66,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private Uri imgUri;
     private ImageButton selectButton;
     private Button shareButton;
-<<<<<<< HEAD:app/src/main/java/com/example/winryxie/tripdiary/CameraFragment.java
     private Button pickPlaceButton;
     private double log = 0;
     private double lat = 0;
     private double currentlog = 0;
     private double currentlat = 0;
     private String location;
-=======
+
     private String UserPackage;
->>>>>>> origin/master:app/src/main/java/com/example/winryxie/tripdiary/Fragments/CameraFragment.java
 
     public static final String FB_STORAGE_PATH = "image/";
     public static final String FB_DATABASE_PATH = "image";
