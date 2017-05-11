@@ -2,25 +2,12 @@ package com.example.winryxie.tripdiary;
 
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.support.v7.app.AppCompatActivity;
-
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
-
-import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
-import com.yalantis.contextmenu.lib.MenuObject;
-import com.yalantis.contextmenu.lib.MenuParams;
-import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
-import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -29,7 +16,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.winryxie.tripdiary.Fragments.CameraFragment;
+import com.example.winryxie.tripdiary.Fragments.DiaryFragment;
+import com.example.winryxie.tripdiary.Fragments.FavoriateFragment;
+import com.example.winryxie.tripdiary.Fragments.MapFragment;
+import com.example.winryxie.tripdiary.Fragments.SearchFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabSelectListener;
+import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
+import com.yalantis.contextmenu.lib.MenuObject;
+import com.yalantis.contextmenu.lib.MenuParams;
+import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
+import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +159,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
                 onBackPressed();
             }
         });
-        mToolBarTextView.setText("TripDiary");
+//        mToolBarTextView.setText("TripDiary");
     }
 
 

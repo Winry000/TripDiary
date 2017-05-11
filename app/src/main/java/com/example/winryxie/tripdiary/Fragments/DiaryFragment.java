@@ -1,4 +1,4 @@
-package com.example.winryxie.tripdiary;
+package com.example.winryxie.tripdiary.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.winryxie.tripdiary.AbstractDetailActivity;
+import com.example.winryxie.tripdiary.ImageListAdapter;
+import com.example.winryxie.tripdiary.ImageUpload;
+import com.example.winryxie.tripdiary.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

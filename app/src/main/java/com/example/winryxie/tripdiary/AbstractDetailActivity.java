@@ -1,10 +1,7 @@
 package com.example.winryxie.tripdiary;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,29 +44,29 @@ public class AbstractDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void colorize(Bitmap photo) {
-        Palette palette = Palette.generate(photo);
-        applyPalette(palette);
-    }
-
-    public void applyPalette(Palette palette) {
-        Resources res = getResources();
-
-        container.setBackgroundColor(palette.getDarkMutedColor(res.getColor(R.color.default_dark_muted)));
-
-        TextView titleView = (TextView) findViewById(R.id.title);
-        titleView.setTextColor(palette.getVibrantColor(res.getColor(R.color.default_vibrant)));
-
-        TextView descriptionView = (TextView) findViewById(R.id.description);
-        descriptionView.setTextColor(palette.getLightVibrantColor(res.getColor(R.color.default_light_vibrant)));
-
-//        colorButton(R.id.info_button, palette.getDarkMutedColor(res.getColor(R.color.default_dark_muted)),
-//                palette.getDarkVibrantColor(res.getColor(R.color.default_dark_vibrant)));
-//        colorButton(R.id.star_button, palette.getMutedColor(res.getColor(R.color.default_muted)),
-//                palette.getVibrantColor(res.getColor(R.color.default_vibrant)));
-
-//        AnimatedPathView star = (AnimatedPathView) findViewById(R.id.star_container);
-//        star.setFillColor(palette.getVibrantColor(R.color.default_vibrant));
-//        star.setStrokeColor(palette.getLightVibrantColor(res.getColor(R.color.default_light_vibrant)));
-    }
+//    private void colorize(Bitmap photo) {
+//        Palette palette = Palette.generate(photo);
+//        applyPalette(palette);
+//    }
+//
+//    public void applyPalette(Palette palette) {
+//        Resources res = getResources();
+//
+//        container.setBackgroundColor(palette.getDarkMutedColor(res.getColor(R.color.default_dark_muted)));
+//
+//        TextView titleView = (TextView) findViewById(R.id.title);
+//        titleView.setTextColor(palette.getVibrantColor(res.getColor(R.color.default_vibrant)));
+//
+//        TextView descriptionView = (TextView) findViewById(R.id.description);
+//        descriptionView.setTextColor(palette.getLightVibrantColor(res.getColor(R.color.default_light_vibrant)));
+//
+////        colorButton(R.id.info_button, palette.getDarkMutedColor(res.getColor(R.color.default_dark_muted)),
+////                palette.getDarkVibrantColor(res.getColor(R.color.default_dark_vibrant)));
+////        colorButton(R.id.star_button, palette.getMutedColor(res.getColor(R.color.default_muted)),
+////                palette.getVibrantColor(res.getColor(R.color.default_vibrant)));
+//
+////        AnimatedPathView star = (AnimatedPathView) findViewById(R.id.star_container);
+////        star.setFillColor(palette.getVibrantColor(R.color.default_vibrant));
+////        star.setStrokeColor(palette.getLightVibrantColor(res.getColor(R.color.default_light_vibrant)));
+//    }
 }
