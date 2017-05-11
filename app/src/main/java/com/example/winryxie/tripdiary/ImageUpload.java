@@ -8,11 +8,19 @@ public class ImageUpload {
     public String name;
     public String content;
     public String url;
+    public double log;
+    public double lat;
+    public String location;
+    public String diaryDate;
 
-    public ImageUpload(String name, String content, String url) {
+    public ImageUpload(String name, String content, String url, String location,double log, double lat, String diaryDate) {
         this.name = name;
         this.content = content;
         this.url = url;
+        this.log = log;
+        this.lat = lat;
+        this.location = location;
+        this.diaryDate = diaryDate;
     }
 
     public String getName() {
@@ -24,6 +32,11 @@ public class ImageUpload {
     public String getUrl() {
         return url;
     }
+
+    public double getLog(){return log;}
+    public double getLat(){return lat;}
+    public String getLocation(){return location;}
+    public String getDiaryDate(){return diaryDate;}
 
     public ImageUpload() {
 

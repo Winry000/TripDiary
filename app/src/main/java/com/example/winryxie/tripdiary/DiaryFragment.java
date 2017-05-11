@@ -36,7 +36,7 @@ public class DiaryFragment extends Fragment {
         imgList = new ArrayList<>();
         lv = (ListView) view.findViewById(R.id.listViewImage);
         progressDialog = new ProgressDialog(this.getContext());
-        progressDialog.setMessage("Please wait load the diaries...");
+        progressDialog.setMessage("Please wait，loading the diaries...");
         progressDialog.show();
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();

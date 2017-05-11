@@ -18,15 +18,23 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import android.app.ProgressDialog;
+import android.util.Log;
 /**
  * Created by winryxie on 5/4/17.
  */
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-
+    private DatabaseReference databaseReference;
     MapView mMapView;
     private GoogleMap googleMap;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -73,6 +81,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         });
+
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        databaseReference = database.getReference(CameraFragment.FB_DATABASE_PATH);
+
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    ImageUpload img = snapshot.getValue(ImageUpload.class);
+                    addPictureonMap(img);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
         return v;
     }
 
@@ -85,7 +116,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void setUpMap() {
-
 
         double latitude = 37.33642715101153;
         double longitude = -121.8819272518158;
@@ -105,9 +135,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.animateCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPosition));
 
+    }
 
 
-
+    private void addPictureonMap(ImageUpload img){
+        Log.i("DEBUG", "image get from database " + img.getLog()+img.getLat());
     }
 
 
