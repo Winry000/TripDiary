@@ -47,7 +47,10 @@ public class ImageListAdapter extends ArrayAdapter<ImageUpload> {
 
         imageTitle.setText(listImage.get(position).getName());
         imageContent.setText(listImage.get(position).getContent());
-        Glide.with(context).load(listImage.get(position).getUrl()).into(imageView);
+        Glide.with(context).load(listImage.get(position).getUrl()).override(320, 300).into(imageView);
         return v;
     }
+
+
+
 }

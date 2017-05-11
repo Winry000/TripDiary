@@ -5,7 +5,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="600dp">
 
 
         <ImageButton
@@ -19,19 +19,23 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
 
+
         <EditText
             android:id="@+id/text_diary"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/image_diary"
-            android:layout_marginTop="23dp"
             android:background="@drawable/round_text"
             android:fontFamily="casual"
+<<<<<<< HEAD
             android:hint="Post Title..." />
+=======
+            android:text="Post Title..."
+            android:layout_below="@+id/image_diary"
+            android:layout_alignLeft="@+id/text_diary_content"
+            android:layout_alignStart="@+id/text_diary_content" />
+>>>>>>> origin/master
 
         <EditText
             android:id="@+id/text_diary_content"
@@ -78,15 +82,20 @@
         <Button
             android:id="@+id/button_share"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:background="@color/colorPrimary"
             android:fontFamily="casual"
             android:text="Share Diary"
+<<<<<<< HEAD
             android:layout_below="@+id/location_pick"
             android:layout_marginTop="22dp"
             android:layout_alignParentBottom="true"
+=======
+            android:layout_below="@+id/text_diary_content"
+>>>>>>> origin/master
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="30dp" />
 
 
 

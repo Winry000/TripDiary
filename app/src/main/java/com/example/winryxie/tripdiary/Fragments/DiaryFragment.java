@@ -1,14 +1,22 @@
-package com.example.winryxie.tripdiary;
+package com.example.winryxie.tripdiary.Fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.winryxie.tripdiary.AbstractDetailActivity;
+import com.example.winryxie.tripdiary.ImageListAdapter;
+import com.example.winryxie.tripdiary.ImageUpload;
+import com.example.winryxie.tripdiary.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,11 +36,13 @@ public class DiaryFragment extends Fragment {
     private ListView lv;
     private ImageListAdapter adapter;
     private ProgressDialog progressDialog;
+    private String UserPackage;
 
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.diary,container,false);
         //getActivity().setContentView(R.layout.diary_image);
+        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
         imgList = new ArrayList<>();
         lv = (ListView) view.findViewById(R.id.listViewImage);
         progressDialog = new ProgressDialog(this.getContext());
@@ -40,8 +50,13 @@ public class DiaryFragment extends Fragment {
         progressDialog.show();
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        UserPackage = currentFirebaseUser.getUid().toString();
 
-        databaseReference = database.getReference(CameraFragment.FB_DATABASE_PATH);
+
+
+        databaseReference = database.getReference("image");
+        databaseReference = databaseReference.child(UserPackage);
 
 
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -61,6 +76,20 @@ public class DiaryFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
                 progressDialog.dismiss();
                 System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                Intent myIntent = new Intent(getActivity(), AbstractDetailActivity.class);
+                myIntent.putExtra("content",imgList.get(position).content);
+                myIntent.putExtra("url",imgList.get(position).url);
+                myIntent.putExtra("name",imgList.get(position).name);
+                startActivity(myIntent);
             }
         });
 //

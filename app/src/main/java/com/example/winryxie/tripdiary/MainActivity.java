@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logInButton.setOnClickListener(this);
         signUpButton.setOnClickListener(this);
 
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() != null) {
+                    startActivity(new Intent(MainActivity.this, MainUserActivity.class));
+                    databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+                    databaseReference.keepSynced(true);
+                }
+            }
+        };
     }
 
     @Override
@@ -78,14 +90,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if(task.isSuccessful()) {
-                            startActivity(new Intent(getApplicationContext(), MainUserActivity.class));
-                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
-                            databaseReference.keepSynced(true);
+//                            startActivity(new Intent(getApplicationContext(), MainUserActivity.class));
+//                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+//                            databaseReference.keepSynced(true);
+                            firebaseAuth.addAuthStateListener(mAuthListener);
+
                         } else {
                             Toast.makeText(MainActivity.this,"Couldn't find user, please sign up first",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
 
 }

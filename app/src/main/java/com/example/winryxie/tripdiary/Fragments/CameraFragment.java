@@ -1,4 +1,4 @@
-package com.example.winryxie.tripdiary;
+package com.example.winryxie.tripdiary.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -21,8 +21,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.util.Log;
 
+import com.example.winryxie.tripdiary.ImageUpload;
+import com.example.winryxie.tripdiary.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -61,7 +64,6 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class CameraFragment extends Fragment implements View.OnClickListener{
-
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private ImageView imageView;
@@ -71,12 +73,16 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private Uri imgUri;
     private ImageButton selectButton;
     private Button shareButton;
+<<<<<<< HEAD:app/src/main/java/com/example/winryxie/tripdiary/CameraFragment.java
     private Button pickPlaceButton;
     private double log = 0;
     private double lat = 0;
     private double currentlog = 0;
     private double currentlat = 0;
     private String location;
+=======
+    private String UserPackage;
+>>>>>>> origin/master:app/src/main/java/com/example/winryxie/tripdiary/Fragments/CameraFragment.java
 
     public static final String FB_STORAGE_PATH = "image/";
     public static final String FB_DATABASE_PATH = "image";
@@ -91,6 +97,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.camera,container,false);
+        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
 
@@ -211,6 +218,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
 
                     ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), location, log,lat,formattedDate );
                     //save the imginfo to firedatabase
+                    databaseReference = databaseReference.child(UserPackage);
                     String uploadId = databaseReference.push().getKey();
                     databaseReference.child(uploadId).setValue(imageupload);
                 }
