@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -39,7 +40,6 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class CameraFragment extends Fragment implements View.OnClickListener{
-
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private ImageView imageView;
@@ -48,6 +48,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     private Uri imgUri;
     private ImageButton selectButton;
     private Button shareButton;
+    private String UserPackage;
 
     public static final String FB_STORAGE_PATH = "image/";
     public static final String FB_DATABASE_PATH = "image";
@@ -56,6 +57,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.camera,container,false);
+        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
 
@@ -114,12 +116,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-
                     //when success dismiss dialog;
                     dialog.dismiss();
                     Toast.makeText(getContext().getApplicationContext(), "Diary Uploaded", Toast.LENGTH_SHORT).show();
                     ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString());
                     //save the imginfo to firedatabase
+                    databaseReference = databaseReference.child(UserPackage);
                     String uploadId = databaseReference.push().getKey();
                     databaseReference.child(uploadId).setValue(imageupload);
                 }

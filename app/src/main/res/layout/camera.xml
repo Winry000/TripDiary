@@ -19,6 +19,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
 
+
         <EditText
             android:id="@+id/text_diary"
             android:layout_width="match_parent"

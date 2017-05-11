@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -32,7 +34,8 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search,container,false);
         TextView username = (TextView)view.findViewById(R.id.username);
-        username.setText("xxx");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        username.setText(user.getEmail());
         imageButton = (ImageButton) view.findViewById(R.id.image_header);
         imageButton.setOnClickListener(this);
         return view;
