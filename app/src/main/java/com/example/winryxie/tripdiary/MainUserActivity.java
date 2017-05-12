@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.example.winryxie.tripdiary.Fragments.FavoriateFragment;
 import com.example.winryxie.tripdiary.Fragments.MapFragment;
 import com.example.winryxie.tripdiary.Fragments.SearchFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
@@ -39,6 +41,9 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
     BottomBar bottomBar;
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
+    private ImageButton imageButton;
+    public final static String CROP_IMAGE_ACTIVITY_REQUEST_CODE = "1234";
+    private String UserPackage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +150,10 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
 
     private void initToolbar() {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
+       // TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
+        TextView username = (TextView)findViewById(R.id.username);
+        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        username.setText(currentFirebaseUser.getEmail());
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);

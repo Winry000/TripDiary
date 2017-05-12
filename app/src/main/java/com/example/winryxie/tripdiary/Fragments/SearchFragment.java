@@ -55,12 +55,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search,container,false);
-        TextView username = (TextView)view.findViewById(R.id.username);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+/*      TextView username = (TextView)view.findViewById(R.id.username);
+        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
         username.setText(user.getEmail());
         imageButton = (ImageButton) view.findViewById(R.id.image_header);
-        imageButton.setOnClickListener(this);
-        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        imageButton.setOnClickListener(this);*/
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         imgList = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -162,7 +163,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 //        myIntent.putExtra("name",imgList.get(position).name);
 //        startActivity(myIntent);
 // }
-    public void changeHeader(View v) {
+   public void changeHeader(View v) {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
