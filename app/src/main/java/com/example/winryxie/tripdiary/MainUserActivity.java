@@ -41,9 +41,6 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
     BottomBar bottomBar;
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
-    private ImageButton imageButton;
-    public final static String CROP_IMAGE_ACTIVITY_REQUEST_CODE = "1234";
-    private String UserPackage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +49,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
         fragmentManager = getSupportFragmentManager();
         initToolbar();
         initMenuFragment();
+
 //        bottomBar = BottomBar.attach(this,savedInstanceState);
         bottomBar = (BottomBar) findViewById(R.id.bottom_bar);
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
@@ -161,6 +159,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         mToolbar.setNavigationIcon(R.drawable.btn_back);
+
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -4,14 +4,15 @@
     android:id="@+id/toolbar"
     app:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="75dp"
     android:minHeight="?attr/actionBarSize"
-    android:background="?attr/colorPrimary">
+    android:background="@color/colorPrimary">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="70dp"
         android:layout_marginLeft="50dp"
+        android:layout_marginTop="5dp"
         android:layout_centerInParent="true"
         android:layout_marginRight="50dp">
 
@@ -21,6 +22,7 @@
             android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
             android:src="@drawable/pikuca"/>
 
         <TextView
