@@ -119,10 +119,10 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
         MenuObject close = new MenuObject();
         close.setResource(R.drawable.icn_close);
 
-        MenuObject send = new MenuObject("Send message");
+        MenuObject send = new MenuObject("Friends");
         send.setResource(R.drawable.icn_1);
 
-        MenuObject like = new MenuObject("Like profile");
+        MenuObject like = new MenuObject("Edit profile");
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.icn_2);
         like.setBitmap(b);
 
@@ -131,7 +131,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
                 BitmapFactory.decodeResource(getResources(), R.drawable.icn_3));
         addFr.setDrawable(bd);
 
-        MenuObject addFav = new MenuObject("Add to favorites");
+        MenuObject addFav = new MenuObject("Share");
         addFav.setResource(R.drawable.icn_4);
 
         MenuObject block = new MenuObject("Sign out");
@@ -158,14 +158,14 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-        mToolbar.setNavigationIcon(R.drawable.btn_back);
+       // mToolbar.setNavigationIcon(R.drawable.btn_back);
 
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        /*mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
-        });
+        });*/
 //        mToolBarTextView.setText("TripDiary");
     }
 
@@ -205,11 +205,18 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
 
     @Override
     public void onMenuItemClick(View clickedView, int position) {
+        if (position == 2){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(MainUserActivity.this, MainActivity.class)); //Go back to home page
+            finish();
+        }
         if (position == 5){
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(MainUserActivity.this, MainActivity.class)); //Go back to home page
             finish();
         }
+
+
 
     }
 
