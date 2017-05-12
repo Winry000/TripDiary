@@ -36,6 +36,18 @@
             tools:layout_editor_absoluteY="0dp" />
 
         <EditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/round"
+            android:fontFamily="casual"
+            android:hint=" Nick Name:"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+
+        <EditText
             android:id="@+id/editTextSignupPassword"
             android:layout_width="match_parent"
             android:layout_height="50dp"

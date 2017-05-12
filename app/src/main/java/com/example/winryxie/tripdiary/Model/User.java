@@ -9,25 +9,34 @@ public class User {
     public String emailAddress;
     public String phoneNumber;
     public String url;
+    public int diaryNumber;
+    public int cityNumber;
+    public int countryNumber;
+    public String signature;
 
-    public User(String nickname, String emailAddress, String phoneNumber, String url) {
+    public User(String nickname, String emailAddress) {
         this.nickname = nickname;
         this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-        this.url = url;
+        this.countryNumber = 0;
+        this.diaryNumber = 0;
+        this.cityNumber = 0;
+        this.signature = "";
+        this.phoneNumber = "";
+        this.url = "";
     }
 
     public String getName() {
         return nickname;
     }
-
     public String getEmailAddress() {return emailAddress;}
-
     public String getUrl() {
         return url;
     }
-
+    public int getDiaryNumber() {return diaryNumber;}
+    public int getCityNumber() {return cityNumber;}
+    public int getCountryNumber() {return countryNumber;}
     public String getPhoneNumber(){return phoneNumber;}
+    public String getSignature(){return signature;}
 
     public User() {
 

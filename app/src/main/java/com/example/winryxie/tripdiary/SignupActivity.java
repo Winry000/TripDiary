@@ -16,6 +16,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.example.winryxie.tripdiary.Model.User;
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -24,8 +30,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private EditText editTextSignupEmail;
     private EditText editTextSignupPassword;
     private EditText editTextRepassword;
+    private EditText editTextName;
     private TextView toLoginText;
-
+    private StorageReference storageReference;
+    private DatabaseReference databaseReference;
+    public static final String FB_DATABASE_PATH = "user";
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     @Override
@@ -35,11 +44,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
-
+        databaseReference = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
         signupButton = (Button) findViewById(R.id.signupButton);
         editTextSignupEmail = (EditText) findViewById(R.id.editTextSignupEmail);
         editTextSignupPassword = (EditText)findViewById(R.id.editTextSignupPassword);
         editTextRepassword = (EditText) findViewById(R.id.editTextRepassword);
+        editTextName = (EditText) findViewById(R.id.editTextName);
         toLoginText = (TextView) findViewById(R.id.toLogInText);
 
         signupButton.setOnClickListener(this);
@@ -58,9 +68,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void signupUser() {
-        String email = editTextSignupEmail.getText().toString().trim();
-        String password = editTextSignupPassword.getText().toString().trim();
-        String repassword = editTextRepassword.getText().toString().trim();
+        final String email = editTextSignupEmail.getText().toString().trim();
+        final String password = editTextSignupPassword.getText().toString().trim();
+        final String repassword = editTextRepassword.getText().toString().trim();
+        final String name = editTextName.getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
             Toast.makeText(this,"Please enter your email",Toast.LENGTH_SHORT).show();
             return;
@@ -71,6 +82,10 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         }
         if (TextUtils.isEmpty(repassword)) {
             Toast.makeText(this,"Please repeat enter password",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(name)) {
+            Toast.makeText(this,"Please enter a name",Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -87,7 +102,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
-                            //start successful and start a new profile
+                            //start successful and start a new profil
+                            User user = new User(name, email);
+                            //save the imginfo to firedatabase
+                            String userId = databaseReference.push().getKey();
+                            databaseReference.child(userId).setValue(user);
+
                             Toast.makeText(SignupActivity.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
                             finish();
                             startActivity(new Intent(SignupActivity.this, MainActivity.class));

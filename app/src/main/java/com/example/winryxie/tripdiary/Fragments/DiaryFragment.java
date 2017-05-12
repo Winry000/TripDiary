@@ -54,7 +54,6 @@ public class DiaryFragment extends Fragment {
         UserPackage = currentFirebaseUser.getUid().toString();
 
 
-
         databaseReference = database.getReference("image");
         databaseReference = databaseReference.child(UserPackage);
 

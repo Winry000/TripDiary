@@ -12,12 +12,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 
 import com.example.winryxie.tripdiary.AlbumsAdapter;
 import com.example.winryxie.tripdiary.ImageUpload;
@@ -38,6 +40,10 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.winryxie.tripdiary.Fragments.CameraFragment.REQUEST_CODE;
+import com.google.firebase.database.Query;
+import com.example.winryxie.tripdiary.Model.User;
+import android.widget.ImageView;
+import android.util.Log;
 
 /**
  * Created by winryxie on 5/4/17.
@@ -51,7 +57,14 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private RecyclerView recyclerView;
     private AlbumsAdapter adapter;
     private DatabaseReference databaseReference;
-
+    private DatabaseReference databaseReferenceUser;
+    private String emailAddress;
+    private TextView username;
+    private TextView usersign;
+    private TextView userdiaryNo;
+    private TextView usercityNo;
+    private TextView usercountryNo;
+    private ImageView userProfile;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search,container,false);
@@ -60,8 +73,13 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         username.setText(user.getEmail());
         imageButton = (ImageButton) view.findViewById(R.id.image_header);
         imageButton.setOnClickListener(this);*/
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        username = (TextView) view.findViewById(R.id.UserProfileName);
+        usersign = (TextView) view.findViewById(R.id.UserProfileSign);
+        userdiaryNo = (TextView) view.findViewById(R.id.UserProfileDiaryNo);
+        usercityNo = (TextView) view.findViewById(R.id.UserProfileCity);
+        usercountryNo = (TextView) view.findViewById(R.id.UserProfileCountry);
+        userProfile = (ImageView) view.findViewById(R.id.ivUserProfilePhoto);
         imgList = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -73,13 +91,39 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         UserPackage = currentFirebaseUser.getUid().toString();
+        emailAddress = currentFirebaseUser.getEmail();
+        databaseReferenceUser = database.getReference("user");
+        Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
+        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    User user = snapshot.getValue(User.class);
+                    Log.i("DEBUG", user.getEmailAddress() + " name "+user.getName() +  "  sign " + user.getSignature() + " Sign "+ user.getUrl() +" CityNumber "+user.getCityNumber() + " diaryNumber" + user.getDiaryNumber());
+                    username.setText(user.getName());
+                    if(user.getSignature() != "")
+                        usersign.setText(user.getSignature());
+                    else usersign.setText("What do you think?");
+                    userdiaryNo.setText(Integer.toString(user.getDiaryNumber()));
+                    usercityNo.setText(Integer.toString(user.getCityNumber()));
+                    usercountryNo.setText(Integer.toString(user.getCountryNumber()));
+                    if(user.url != ""){
+                        Glide.with(getContext()).load(user.getUrl()).override(60, 60).into(userProfile);
+                    }
+                }
+                recyclerView.setAdapter(adapter);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
         databaseReference = database.getReference("image");
         databaseReference = databaseReference.child(UserPackage);
         adapter = new AlbumsAdapter(getContext(), imgList);
-
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override

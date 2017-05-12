@@ -33,6 +33,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/UserProfileName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="John Smith"
@@ -40,6 +41,7 @@
                     android:textSize="24sp" />
 
                 <TextView
+                    android:id="@+id/UserProfileSign"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="this is a wonderfulday"
@@ -48,12 +50,12 @@
 
                 <Button
                     android:id="@+id/btnFollow"
-                    android:layout_width="match_parent"
+                    android:layout_width="120dp"
                     android:background="@drawable/travel_btn"
                     android:textColor="#ffffff"
-                    android:layout_height="24dp"
+                    android:layout_height="50dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginRight="24dp"
+                    android:layout_marginRight="18dp"
                     android:textSize="12sp"
                     android:text="Traveling" />
 
@@ -76,6 +78,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/UserProfileDiaryNo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1167"
@@ -98,6 +101,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/UserProfileCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="396"
@@ -119,6 +123,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/UserProfileCountry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="485"
