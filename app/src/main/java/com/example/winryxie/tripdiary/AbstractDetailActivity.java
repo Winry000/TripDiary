@@ -129,10 +129,6 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
 
     private void initToolbar() {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        // TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
-        TextView username = (TextView)findViewById(R.id.username);
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        username.setText(currentFirebaseUser.getEmail());
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);

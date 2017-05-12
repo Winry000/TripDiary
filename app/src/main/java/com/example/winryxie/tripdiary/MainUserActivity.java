@@ -148,10 +148,8 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
 
     private void initToolbar() {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-       // TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
-        TextView username = (TextView)findViewById(R.id.username);
-        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        username.setText(currentFirebaseUser.getEmail());
+        TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
+
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -166,7 +164,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
                 onBackPressed();
             }
         });*/
-//        mToolBarTextView.setText("TripDiary");
+        mToolBarTextView.setText("Trip Diary");
     }
 
 
