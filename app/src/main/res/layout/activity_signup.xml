@@ -13,7 +13,7 @@
         android:layout_height="595dp"
         android:orientation="vertical"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="11dp">
+        tools:layout_editor_absoluteY="16dp">
 
         <ImageView
             android:id="@+id/imageView"
@@ -27,7 +27,7 @@
             android:id="@+id/editTextSignupEmail"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             android:background="@drawable/round"
             android:fontFamily="casual"
             android:hint="  Email:"
@@ -39,7 +39,7 @@
             android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             android:background="@drawable/round"
             android:fontFamily="casual"
             android:hint=" Nick Name:"
@@ -51,7 +51,7 @@
             android:id="@+id/editTextSignupPassword"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             android:background="@drawable/round"
             android:fontFamily="casual"
             android:hint=" Password:"
@@ -63,7 +63,7 @@
             android:id="@+id/editTextRepassword"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             android:background="@drawable/round"
             android:fontFamily="casual"
             android:hint=" Repeat password:"
@@ -75,7 +75,7 @@
             android:id="@+id/signupButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             android:background="@color/colorAccent"
             android:fontFamily="casual"
             android:text="Sign Up"
