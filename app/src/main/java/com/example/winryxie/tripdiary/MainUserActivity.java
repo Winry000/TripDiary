@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +23,6 @@ import com.example.winryxie.tripdiary.Fragments.FavoriateFragment;
 import com.example.winryxie.tripdiary.Fragments.MapFragment;
 import com.example.winryxie.tripdiary.Fragments.SearchFragment;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
@@ -164,7 +162,6 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
                 onBackPressed();
             }
         });*/
-        mToolBarTextView.setText("Trip Diary");
     }
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#00BCD4</color>
-    <color name="colorPrimaryDark">#22a4b6</color>
+    <color name="colorPrimary">#284560</color>
+    <color name="colorPrimaryDark">#284560</color>
     <color name="colorAccent">#9b939898</color>
 
     <color name="photo_tint">#7f101010</color>
@@ -24,9 +24,9 @@
     <color name="mt_gray5">#F8F8F9</color>
     <color name="mt_gray6">#B6B6B8</color>
     <color name="mt_black">#1D1D26</color>
-    <color name="primary_text">#212121</color>
+    <color name="primary_text">#f9f5f5</color>
     <color name="secondary_text">#727272</color>
     <color name="secondary_text_transparent_70">#B3727272</color>
-    <color name="PorfilecolorPrimary">#0C776D</color>
+    <color name="PorfilecolorPrimary">#cb19285b</color>
     PorfilecolorPrimary
 </resources>

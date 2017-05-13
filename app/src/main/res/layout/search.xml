@@ -7,12 +7,12 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/vUserProfileRoot"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/PorfilecolorPrimary"
+        android:layout_height="188dp"
+        android:background="@drawable/star"
         android:orientation="vertical"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:padding="24dp">
+        android:padding="10dp">
 
         <LinearLayout
             android:clipChildren="false"
@@ -159,18 +159,18 @@
         android:src="@drawable/back_1"
         android:scaleType="fitXY"/>
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:textSize="15sp"
-        android:gravity="center"
-        android:padding="10dp"
-        android:background="#a5000000"
-        android:textColor="@android:color/white"
-        android:text="The World Around Me: The Best Photography"/>
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#a5000000"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:padding="10dp"
+            android:text="The World Around Me: The Best Photography"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
     </android.support.v7.widget.CardView>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
