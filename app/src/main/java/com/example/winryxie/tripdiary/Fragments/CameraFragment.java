@@ -40,6 +40,7 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -271,6 +272,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
 
                     ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), editLocation.getText().toString(), log,lat,formattedDate );
                     //save the imginfo to firedatabase
+
                     databaseReference = databaseReference.child(UserPackage);
                     String uploadId = databaseReference.push().getKey();
                     databaseReference.child(uploadId).setValue(imageupload);

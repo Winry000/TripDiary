@@ -154,7 +154,8 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-       // mToolbar.setNavigationIcon(R.drawable.btn_back);
+        mToolbar.setLogo(R.drawable.logo);
+        mToolbar.setNavigationIcon(R.drawable.btn_back_toolbar);
 
         /*mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
