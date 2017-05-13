@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,22 +65,17 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private TextView userdiaryNo;
     private TextView usercityNo;
     private TextView usercountryNo;
-    private ImageView userProfile;
+    private CircleImageView userProfile;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search,container,false);
-/*      TextView username = (TextView)view.findViewById(R.id.username);
-        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
-        username.setText(user.getEmail());
-        imageButton = (ImageButton) view.findViewById(R.id.image_header);
-        imageButton.setOnClickListener(this);*/
 
         username = (TextView) view.findViewById(R.id.UserProfileName);
         usersign = (TextView) view.findViewById(R.id.UserProfileSign);
         userdiaryNo = (TextView) view.findViewById(R.id.UserProfileDiaryNo);
         usercityNo = (TextView) view.findViewById(R.id.UserProfileCity);
         usercountryNo = (TextView) view.findViewById(R.id.UserProfileCountry);
-        userProfile = (ImageView) view.findViewById(R.id.ivUserProfilePhoto);
+        userProfile = (CircleImageView) view.findViewById(R.id.ivUserProfilePhoto);
         imgList = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -108,7 +104,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     usercityNo.setText(Integer.toString(user.getCityNumber()));
                     usercountryNo.setText(Integer.toString(user.getCountryNumber()));
                     if(user.url != ""){
-                        Glide.with(getContext()).load(user.getUrl()).override(60, 60).into(userProfile);
+                        Glide.with(getContext()).load(user.getUrl()).into(userProfile);
                     }
                 }
                 recyclerView.setAdapter(adapter);

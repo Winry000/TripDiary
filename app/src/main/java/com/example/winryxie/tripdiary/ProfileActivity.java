@@ -4,6 +4,7 @@ package com.example.winryxie.tripdiary;
  * Created by Dora on 5/11/17.
  */
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,6 +27,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,17 +40,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.example.winryxie.tripdiary.Model.User;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
-import android.widget.ImageView;
 
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
 
 
@@ -61,13 +67,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private TextView Email;
     private CircleImageView ProfileImage;
     private StorageReference storageReference;
-    private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceUser;
     private String emailAddress;
     public static final String FB_DATABASE_PATH = "user";
+    public static final String FB_STORAGE_PATH = "profile/";
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private Query queryUser;
+    private Uri headUri;
     public static final int REQUEST_CODE = 1234;
     private FirebaseUser currentFirebaseUser;
 
@@ -93,6 +100,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         emailAddress = currentFirebaseUser.getEmail();
+        storageReference = FirebaseStorage.getInstance().getReference();
         databaseReferenceUser = database.getReference(FB_DATABASE_PATH);
         Email.setText(emailAddress);
         queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
@@ -114,7 +122,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 
@@ -135,7 +142,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page
+                finish();
             }
         });
     }
@@ -148,6 +156,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         if (v == ChangePhoto) {
             changeHeader(v);
         }
+    }
+
+    public String getImageExt(Uri uri) {
+        ContentResolver contentResolver = getApplicationContext().getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return  mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
     public void changeHeader(View v) {
@@ -167,13 +181,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         switch (requestCode) {
             case REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    Uri headUri = data.getData();
+                    headUri = data.getData();
 
-                    Log.i("DBUG", "headUri "+headUri.toString());
+                    Log.i("DEBUG", "headUri " + headUri.toString());
 
                     CropImage.activity(headUri)
                             .setGuidelines(CropImageView.Guidelines.ON)
-                            .setAspectRatio(1,1)
+                            .setAspectRatio(1, 1)
                             .start(this);
                     CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
@@ -181,13 +195,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (resultCode == RESULT_OK) {
                         Uri resultUri = data.getData();
-                        Log.i("DBUG", "resultUri "+resultUri.toString());
+                        Log.i("DEBUG", "resultUri " + resultUri.toString());
+
                         try {
-                            bm = MediaStore.Images.Media.getBitmap(this.getApplicationContext().getContentResolver(),resultUri);
+                            bm = MediaStore.Images.Media.getBitmap(this.getApplicationContext().getContentResolver(), resultUri);
+
                         } catch (IOException e) {
                             e.printStackTrace();
+                            Log.i("DEBUG", "error in result_OK");
                         }
                         ProfileImage.setImageBitmap(bm);
+                        storeProfile(resultUri);
+
                     } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                         Exception error = result.getError();
                         Log.i("DEBUG", error.toString());
@@ -198,6 +217,61 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    private void storeProfile(Uri resultUri){
+
+        final ProgressDialog dialog = new ProgressDialog(ProfileActivity.this);
+        dialog.setTitle("Upload Profile Image");
+        dialog.show();
+
+        //get the storage reference
+        Log.i("DEBUG","resultUri in storeProfile is "+resultUri.toString());
+        StorageReference ref = storageReference.child(FB_STORAGE_PATH + System.currentTimeMillis() + "." + getImageExt(resultUri));
+        Log.i("DEBUG","resultUri in storeProfile is "+resultUri.toString());
+        ref.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                //when success dismiss dialog;
+                @SuppressWarnings("VisibleForTests")
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                final String profileurl = downloadUrl.toString();
+                dialog.dismiss();
+                Toast.makeText(getApplicationContext(), "Profile Image Uploaded", Toast.LENGTH_SHORT).show();
+
+                queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            snapshot.getRef().child("url").setValue(profileurl);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        @SuppressWarnings("VisibleForTests")
+                        double progress = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        dialog.setMessage("Upload " + (int) progress + " %");
+                    }
+                });
+
+    }
     private void UpdateUser() {
         final String nickname = editTextNickName.getText().toString().trim();
         final String phonenumber = editTextPhoneNumber.getText().toString().trim();

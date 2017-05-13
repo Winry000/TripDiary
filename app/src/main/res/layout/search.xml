@@ -19,11 +19,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
+
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/ivUserProfilePhoto"
-                android:layout_width="@dimen/user_profile_avatar_size"
-                android:layout_height="@dimen/user_profile_avatar_size"
-                android:layout_marginRight="16dp" />
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_gravity="center"
+                app:civ_border_color="#ffffff"
+                app:civ_border_width="2dp"
+                android:layout_marginRight="16dp"
+                 />
+
 
             <LinearLayout
                 android:id="@+id/vUserDetails"
@@ -36,7 +42,6 @@
                     android:id="@+id/UserProfileName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="John Smith"
                     android:textColor="@color/primary_text"
                     android:textSize="24sp" />
 
@@ -44,7 +49,6 @@
                     android:id="@+id/UserProfileSign"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="this is a wonderfulday"
                     android:textSize="12sp"
                     android:textColor="#bbbbbb" />
 
@@ -81,7 +85,6 @@
                     android:id="@+id/UserProfileDiaryNo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1167"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
 
@@ -104,7 +107,6 @@
                     android:id="@+id/UserProfileCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="396"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
 
@@ -126,7 +128,6 @@
                     android:id="@+id/UserProfileCountry"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="485"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
 

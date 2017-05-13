@@ -19,7 +19,7 @@
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/profile_toolbar_layout"
-            android:layout_width="355dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -28,12 +28,13 @@
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 android:layout_gravity="center"
-                android:src="@drawable/pikuca"
+                android:src="@drawable/profile_image"
                 app:civ_border_color="#ffffff"
                 app:civ_border_width="2dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
+                android:gravity="center"
                 android:layout_marginTop="25dp" />
 
             <Button
