@@ -5,59 +5,122 @@ package com.example.winryxie.tripdiary;
  */
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.example.winryxie.tripdiary.Model.User;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import android.widget.ImageView;
 
+import java.io.IOException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
 
 
-    private Button signupButton;
-    private EditText editTextSignupEmail;
-    private EditText editTextSignupPassword;
-    private EditText editTextRepassword;
-    private EditText editTextName;
-    private TextView toLoginText;
+    private Button SaveButton;
+    private Button ChangePhoto;
+    private EditText editTextNickName;
+    private EditText editTextPhoneNumber;
+    private EditText editTextSignature;
+    private EditText editTextPassword;
+    private EditText editTextPasswordAgain;
+    private EditText editTextOldPassword;
+    private TextView Email;
+    private CircleImageView ProfileImage;
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
+    private DatabaseReference databaseReferenceUser;
+    private String emailAddress;
     public static final String FB_DATABASE_PATH = "user";
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+    private Query queryUser;
+    public static final int REQUEST_CODE = 1234;
+    private FirebaseUser currentFirebaseUser;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.profile_edit);
+        initToolbar();
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        progressDialog = new ProgressDialog(this);
-        databaseReference = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
-        signupButton = (Button) findViewById(R.id.signupButton);
-        editTextSignupEmail = (EditText) findViewById(R.id.editTextSignupEmail);
-        editTextSignupPassword = (EditText)findViewById(R.id.editTextSignupPassword);
-        editTextRepassword = (EditText) findViewById(R.id.editTextRepassword);
-        editTextName = (EditText) findViewById(R.id.editTextName);
-        toLoginText = (TextView) findViewById(R.id.toLogInText);
+        SaveButton = (Button) findViewById(R.id.button_save_profile);
+        ChangePhoto = (Button) findViewById(R.id.btn_edit_profile_iamge);
+        ProfileImage = (CircleImageView) findViewById(R.id.profile_image);
+        editTextNickName = (EditText) findViewById(R.id.profile_nick_name);
+        editTextPhoneNumber = (EditText)findViewById(R.id.profile_phonenumber);
+        editTextSignature = (EditText) findViewById(R.id.profile_signature);
+        editTextPassword = (EditText) findViewById(R.id.profile_password);
+        editTextPasswordAgain = (EditText) findViewById(R.id.profile_password_again);
+        editTextOldPassword = (EditText) findViewById(R.id.profile_old_password);
+        Email = (TextView) findViewById(R.id.profile_email);
 
-        signupButton.setOnClickListener(this);
-        toLoginText.setOnClickListener(this);
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        emailAddress = currentFirebaseUser.getEmail();
+        databaseReferenceUser = database.getReference(FB_DATABASE_PATH);
+        Email.setText(emailAddress);
+        queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
+        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    User user = snapshot.getValue(User.class);
+                    Log.i("DEBUG", user.getEmailAddress() + " name "+user.getName() +  "  sign " + user.getSignature() + " Url "+ user.getUrl() +" CityNumber "+user.getCityNumber() + " diaryNumber" + user.getDiaryNumber());
+                    editTextNickName.setText(user.getName());
+                    if(!user.getSignature().equals(""))
+                        editTextSignature.setText(user.getSignature());
+                    editTextPhoneNumber.setText(user.getPhoneNumber());
+                    if(!user.getUrl().equals("")){
+                        Glide.with(getApplicationContext()).load(user.getUrl()).into(ProfileImage);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        SaveButton.setOnClickListener(this);
+        ChangePhoto.setOnClickListener(this);
+
     }
 
     private void initToolbar() {
@@ -75,70 +138,136 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 onBackPressed();
             }
         });
-//        mToolBarTextView.setText("TripDiary");
     }
 
     @Override
     public void onClick(View v) {
-        if (v == signupButton) {
-            signupUser();
+        if (v == SaveButton) {
+            UpdateUser();
         }
-        if (v == toLoginText) {
-            finish();
-            startActivity(new Intent(this, MainActivity.class));
+        if (v == ChangePhoto) {
+            changeHeader(v);
         }
     }
 
-    private void signupUser() {
-        final String email = editTextSignupEmail.getText().toString().trim();
-        final String password = editTextSignupPassword.getText().toString().trim();
-        final String repassword = editTextRepassword.getText().toString().trim();
-        final String name = editTextName.getText().toString().trim();
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(this,"Please enter your email",Toast.LENGTH_SHORT).show();
-            return;
+    public void changeHeader(View v) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select image"), REQUEST_CODE);
+    }
+
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    Uri headUri = data.getData();
+
+                    Log.i("DBUG", "headUri "+headUri.toString());
+
+                    CropImage.activity(headUri)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setAspectRatio(1,1)
+                            .start(this);
+                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+                    Bitmap bm = null;
+
+                    if (resultCode == RESULT_OK) {
+                        Uri resultUri = data.getData();
+                        Log.i("DBUG", "resultUri "+resultUri.toString());
+                        try {
+                            bm = MediaStore.Images.Media.getBitmap(this.getApplicationContext().getContentResolver(),resultUri);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        ProfileImage.setImageBitmap(bm);
+                    } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                        Exception error = result.getError();
+                        Log.i("DEBUG", error.toString());
+                    }
+
+                }
         }
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(this,"Please enter your password",Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(repassword)) {
-            Toast.makeText(this,"Please repeat enter password",Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(name)) {
-            Toast.makeText(this,"Please enter a name",Toast.LENGTH_SHORT).show();
-            return;
-        }
+
+    }
+
+    private void UpdateUser() {
+        final String nickname = editTextNickName.getText().toString().trim();
+        final String phonenumber = editTextPhoneNumber.getText().toString().trim();
+        final String password = editTextPassword.getText().toString().trim();
+        final String repassword = editTextPasswordAgain.getText().toString().trim();
+        final String signature = editTextSignature.getText().toString().trim();
+        final String oldPassword = editTextOldPassword.getText().toString().trim();
 
         if (!password.equals(repassword)) {
             Toast.makeText(this,"Password doesn't match, please try again..",Toast.LENGTH_SHORT).show();
             return;
         }
-        progressDialog.setMessage("Sign up user...");
-        progressDialog.show();
 
-        firebaseAuth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressDialog.dismiss();
-                        if (task.isSuccessful()) {
-                            //start successful and start a new profil
-                            User user = new User(name, email);
-                            //save the imginfo to firedatabase
-                            String userId = databaseReference.push().getKey();
-                            databaseReference.child(userId).setValue(user);
-
-                            Toast.makeText(ProfileActivity.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
-                            finish();
-                            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                            return;
-                        } else {
-                            Toast.makeText(ProfileActivity.this, "Could not sign in, please try again...", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        snapshot.getRef().child("nickname").setValue(nickname);
+                        snapshot.getRef().child("phonenumber").setValue(phonenumber);
+                        snapshot.getRef().child("signature").setValue(signature);
                     }
-                });
+                }
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        if (TextUtils.isEmpty(password) && TextUtils.isEmpty(repassword)) {
+            startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page
+            finish();
+
+        }else{
+            if(TextUtils.isEmpty(oldPassword)){
+                Toast.makeText(this,"Please enter your current password",Toast.LENGTH_SHORT).show();
+                return;
+            }
+// Get auth credentials from the user for re-authentication. The example below shows
+// email and password credentials but there are multiple possible providers,
+// such as GoogleAuthProvider or FacebookAuthProvider.
+            AuthCredential credential = EmailAuthProvider
+                    .getCredential(emailAddress, oldPassword);
+
+// Prompt the user to re-provide their sign-in credentials
+            currentFirebaseUser.reauthenticate(credential)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                currentFirebaseUser.updatePassword(password).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            startActivity(new Intent(ProfileActivity.this, MainActivity.class)); //Go back to home page
+                                            finish();
+                                        } else {
+                                            Log.d("DEBUG", "Error password not updated");
+                                        }
+                                    }
+                                });
+                            } else {
+                                Log.d("DEBUG", "Error auth failed");
+                            }
+                        }
+                    });
+
+
+        }
+
     }
 }

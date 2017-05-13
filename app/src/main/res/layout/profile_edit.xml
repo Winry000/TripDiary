@@ -29,14 +29,15 @@
                 android:layout_height="110dp"
                 android:layout_gravity="center"
                 android:src="@drawable/pikuca"
-                app:civ_border_color="#FF000000"
+                app:civ_border_color="#aae1ac0f"
                 app:civ_border_width="2dp"
                 android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="25dp" />
 
             <Button
-                android:id="@+id/btn_edit_profile2"
+                android:id="@+id/btn_edit_profile_iamge"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_alignRight="@id/profile_image"
@@ -57,11 +58,10 @@
 
         </RelativeLayout>
 
-
-
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
+        android:id="@+id/profile_list"
         android:layout_width="fill_parent"
         android:layout_height="515dp"
         android:layout_marginTop="10dp"
@@ -77,7 +77,7 @@
 
             <EditText
                 android:fontFamily="casual"
-                android:id="@+id/input_name"
+                android:id="@+id/profile_nick_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
@@ -86,13 +86,13 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_email"
+            android:id="@+id/input_layout_signature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <EditText
                 android:fontFamily="casual"
-                android:id="@+id/input_signature"
+                android:id="@+id/profile_signature"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Please put your signature" />
@@ -105,13 +105,34 @@
 
             <EditText
                 android:fontFamily="casual"
-                android:id="@+id/input_phonenumber"
+                android:id="@+id/profile_phonenumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPhonetic"
                 android:hint="Input phone number" />
         </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:fontFamily="casual"
+            android:id="@+id/Changepassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Change Password" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_old_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:fontFamily="casual"
+                android:id="@+id/profile_old_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="Input your old password" />
+        </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_password"
@@ -120,10 +141,10 @@
 
             <EditText
                 android:fontFamily="casual"
-                android:id="@+id/input_password"
+                android:id="@+id/profile_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPhonetic"
+                android:inputType="textPassword"
                 android:hint="Input password" />
         </android.support.design.widget.TextInputLayout>
 
@@ -134,15 +155,27 @@
 
             <EditText
                 android:fontFamily="casual"
-                android:id="@+id/input_password_again"
+                android:id="@+id/profile_password_again"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPhonetic"
+                android:inputType="textPassword"
                 android:hint="Input password again" />
         </android.support.design.widget.TextInputLayout>
 
+        <Button
+            android:id="@+id/button_save_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fontFamily="casual"
+            android:text="Save"
+            android:layout_marginTop="22dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
 
     </LinearLayout>
+
 
 
 </LinearLayout>

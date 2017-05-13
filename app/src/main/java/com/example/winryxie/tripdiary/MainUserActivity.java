@@ -146,7 +146,6 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
 
     private void initToolbar() {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        TextView mToolBarTextView = (TextView) findViewById(R.id.text_view_toolbar_title);
 
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
@@ -202,8 +201,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
     @Override
     public void onMenuItemClick(View clickedView, int position) {
         if (position == 2){
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(MainUserActivity.this, MainActivity.class)); //Go back to home page
+            startActivity(new Intent(MainUserActivity.this, ProfileActivity.class)); //Go back to home page
             finish();
         }
         if (position == 5){

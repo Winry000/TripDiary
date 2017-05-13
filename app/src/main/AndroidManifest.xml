@@ -28,6 +28,7 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainUserActivity"></activity>
         <activity android:name=".AbstractDetailActivity"></activity>
+        <activity android:name=".ProfileActivity"></activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
         <meta-data
