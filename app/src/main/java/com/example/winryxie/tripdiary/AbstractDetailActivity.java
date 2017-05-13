@@ -135,7 +135,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-         mToolbar.setNavigationIcon(R.drawable.btn_back);
+         mToolbar.setNavigationIcon(R.drawable.btn_back_toolbar);
 
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
