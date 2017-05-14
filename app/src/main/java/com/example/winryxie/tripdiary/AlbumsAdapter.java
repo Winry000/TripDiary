@@ -36,6 +36,9 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.MyViewHold
             Intent myIntent = new Intent(context, AbstractDetailActivity.class);
             myIntent.putExtra("content", SearchFragment.imgList.get(getPosition()).content);
             myIntent.putExtra("url", SearchFragment.imgList.get(getPosition()).url);
+            myIntent.putExtra("name",  SearchFragment.imgList.get(getPosition()).name);
+            myIntent.putExtra("diaryDate", SearchFragment.imgList.get(getPosition()).getDiaryDate());
+            myIntent.putExtra("location", SearchFragment.imgList.get(getPosition()).getLocation());
             myIntent.putExtra("name", SearchFragment.imgList.get(getPosition()).name);
             myIntent.putExtra("like", SearchFragment.imgList.get(getPosition()).like);
             myIntent.putExtra("like", SearchFragment.imgList.get(getPosition()).like);

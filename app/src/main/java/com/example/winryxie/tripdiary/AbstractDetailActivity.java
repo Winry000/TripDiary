@@ -55,6 +55,8 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         TextView imageTitle = (TextView) findViewById(R.id.title);
         TextView imageContent = (TextView) findViewById(R.id.description);
         ImageView imageView = (ImageView) findViewById(R.id.photo);
+        TextView diarydate = (TextView) findViewById(R.id.diary_date);
+        TextView diarylocation = (TextView) findViewById(R.id.diary_location);
         final ImageButton likeButton =(ImageButton) findViewById(R.id.like_button);
         final TextView likeCount = (TextView) findViewById(R.id.like_count);
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -69,6 +71,8 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         if (bundle != null) {
             imageTitle.setText(bundle.getString("name"));
             imageContent.setText(bundle.getString("content"));
+            diarydate.setText(bundle.getString("diaryDate"));
+            diarylocation.setText(bundle.getString("location"));
             Glide.with(this).load(bundle.getString("url")).override(320, 300).into(imageView);
 
 
@@ -87,7 +91,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             public void onClick(View v)
             {
                 if (v == likeButton && flag == false) {
-                   likeButton.setImageResource(R.drawable.like);
+                    likeButton.setImageResource(R.drawable.like);
                     num = bundle.getInt("like") + 1;
                     likeCount.setText(Integer.toString(num));
                     flag = true;
@@ -226,7 +230,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-         mToolbar.setNavigationIcon(R.drawable.btn_back_toolbar);
+        mToolbar.setNavigationIcon(R.drawable.btn_back_toolbar);
 
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:io="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -74,19 +73,39 @@
                 android:layout_alignParentStart="true"
                 android:layout_weight="0.56"
                 android:orientation="vertical"
-                android:layout_below="@+id/photo">
+                android:layout_below="@+id/like_button">
+
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-light"
-                    android:textSize="40sp"
+                    android:textSize="30sp"
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:layout_marginTop="2dp"
-                    android:layout_marginBottom="24dp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/diary_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/diary_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="16sp" />
+
                 <ScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
@@ -109,3 +128,4 @@
 
 
 </RelativeLayout>
+
