@@ -42,12 +42,6 @@ public class ImageUpload {
     public int getLike () {
         return likes;
     }
-    public void setLike(int likes ) {
-        likes = likes;
-    }
-    public void setLikeflag(boolean likeflag) {
-        likeflag = likeflag;
-    }
 
     public boolean getLikeflag() {
         return likeflag;

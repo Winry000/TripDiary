@@ -86,8 +86,9 @@ public class DiaryFragment extends Fragment {
                 myIntent.putExtra("content",imgList.get(position).content);
                 myIntent.putExtra("url",imgList.get(position).url);
                 myIntent.putExtra("name",imgList.get(position).name);
-                myIntent.putExtra("like", imgList.get(position).likes);
+                myIntent.putExtra("likes", imgList.get(position).likes);
                 myIntent.putExtra("likeflag", imgList.get(position).likeflag);
+                myIntent.putExtra("index",position);
                 startActivity(myIntent);
             }
         });

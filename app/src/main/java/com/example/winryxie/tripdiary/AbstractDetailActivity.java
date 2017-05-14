@@ -18,6 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
@@ -35,6 +41,8 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
     private FragmentManager fragmentManager;
     boolean flag = false;
     private int num = 0;
+    private String UserPackage;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +57,13 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         ImageView imageView = (ImageView) findViewById(R.id.photo);
         final ImageButton likeButton =(ImageButton) findViewById(R.id.like_button);
         final TextView likeCount = (TextView) findViewById(R.id.like_count);
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
 
         container = findViewById(R.id.container);
 
+        databaseReference = database.getReference("image");
+        databaseReference = databaseReference.child(UserPackage);
 
         final Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -60,6 +72,15 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             Glide.with(this).load(bundle.getString("url")).override(320, 300).into(imageView);
 
 
+        }
+        if (bundle.getBoolean("likeflag") == false) {
+            likeButton.setImageResource(R.drawable.likebefore);
+            num = bundle.getInt("likes");
+            likeCount.setText(Integer.toString(num));
+        } else {
+            likeButton.setImageResource(R.drawable.like);
+            num = bundle.getInt("likes");
+            likeCount.setText(Integer.toString(num));
         }
 
         likeButton.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +97,39 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
                     likeCount.setText(Integer.toString(num));
                     flag = false;
                 }
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int count = 0;
+                        for(DataSnapshot imgSnapshot: dataSnapshot.getChildren()) {
+//                            ImageUpload img = imgSnapshot.getValue(ImageUpload.class);
+                            if (count == bundle.getInt("index")) {
+                                imgSnapshot.getRef().child("likes").setValue(num);
+                                imgSnapshot.getRef().child("likeflag").setValue(flag);
+                                break;
+                            }
+                            count++;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+//                databaseReference.runTransaction(new Transaction.Handler() {
+//                    @Override
+//                    public Transaction.Result doTransaction(MutableData mutableData) {
+//                        Object set = mutableData.getValue();
+//                        ImageUpload img = mutableData.getValue(ImageUpload.class);
+//                        img.setLike(num);
+//                        return Transaction.success(mutableData);
+//                    }
+//                    @Override
+//                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+//
+//                    }
+//                });
 
             }
         });
