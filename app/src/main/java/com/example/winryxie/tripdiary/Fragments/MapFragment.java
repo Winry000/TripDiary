@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -14,8 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.winryxie.tripdiary.ImageUpload;
 import com.example.winryxie.tripdiary.R;
@@ -141,8 +142,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             double longitude = imgMapList.get(i).getLog();
             String img_title = imgMapList.get(i).getName();
             String img_url = imgMapList.get(i).getUrl();
-            TextView textView = (TextView) marker.findViewById(R.id.num_txt);
-            textView.setText(img_title);
+//            TextView textView = (TextView) marker.findViewById(R.id.num_txt);
+//            textView.setText(img_title);
+            ImageButton imageButton = (ImageButton) marker.findViewById(R.id.num_txt);
+            imageButton.setImageURI(Uri.parse("http://i.imgur.com/DvpvklR.png"));
 
 
             googleMap.addMarker(new MarkerOptions()

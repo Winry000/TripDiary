@@ -63,7 +63,7 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        ImageUpload album = albumList.get(position);
+            ImageUpload album = albumList.get(position);
         // loading album cover using Glide library
         Glide.with(context).load(album.getUrl()).into(holder.thumbnail);
     }

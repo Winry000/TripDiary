@@ -38,7 +38,6 @@ public class DiaryFragment extends Fragment {
     private ProgressDialog progressDialog;
     private String UserPackage;
 
-
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.diary,container,false);
         //getActivity().setContentView(R.layout.diary_image);
@@ -87,6 +86,8 @@ public class DiaryFragment extends Fragment {
                 myIntent.putExtra("content",imgList.get(position).content);
                 myIntent.putExtra("url",imgList.get(position).url);
                 myIntent.putExtra("name",imgList.get(position).name);
+                myIntent.putExtra("like", imgList.get(position).likes);
+                myIntent.putExtra("likeflag", imgList.get(position).likeflag);
                 startActivity(myIntent);
             }
         });

@@ -22,7 +22,7 @@ import java.util.List;
 public class ImageListAdapter extends ArrayAdapter<ImageUpload> {
     private Activity context;
     private int resource;
-    private List<ImageUpload> listImage;
+    public List<ImageUpload> listImage;
     public ImageListAdapter(@NonNull Activity context, @LayoutRes int resource, @NonNull List<ImageUpload> objects) {
         super(context, resource, objects);
         this.context = context;

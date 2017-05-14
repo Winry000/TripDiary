@@ -12,14 +12,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.StorageReference;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
@@ -31,13 +29,17 @@ import java.util.List;
 
 public class AbstractDetailActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
 
-    private StorageReference storageReference;
+
     public View container;
     private ContextMenuDialogFragment mMenuDialogFragment;
     private FragmentManager fragmentManager;
+    boolean flag = false;
+    private int num = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_abstract_detail);
         fragmentManager = getSupportFragmentManager();
         initToolbar();
@@ -45,27 +47,62 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         TextView imageTitle = (TextView) findViewById(R.id.title);
         TextView imageContent = (TextView) findViewById(R.id.description);
         ImageView imageView = (ImageView) findViewById(R.id.photo);
+        final ImageButton likeButton =(ImageButton) findViewById(R.id.like_button);
+        final TextView likeCount = (TextView) findViewById(R.id.like_count);
+
         container = findViewById(R.id.container);
 
-        Bundle bundle = getIntent().getExtras();
+
+        final Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             imageTitle.setText(bundle.getString("name"));
             imageContent.setText(bundle.getString("content"));
             Glide.with(this).load(bundle.getString("url")).override(320, 300).into(imageView);
-//            try {
-//                URL myUrl = new URL(bundle.getString("url"));
-//                HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
-//                connection.setDoInput(true);
-//                connection.connect();
-//                InputStream input = connection.getInputStream();
-//                Bitmap myBitmap = BitmapFactory.decodeStream(input);
-//                colorize(myBitmap);
-//            } catch (MalformedURLException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+
+
         }
+
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                if (v == likeButton && flag == false) {
+                   likeButton.setImageResource(R.drawable.like);
+                    num = bundle.getInt("likes") + 1;
+                    likeCount.setText(Integer.toString(num));
+                    flag = true;
+                } else if (v == likeButton && flag == true) {
+                    likeButton.setImageResource(R.drawable.likebefore);
+                    num = bundle.getInt("likes");
+                    likeCount.setText(Integer.toString(num));
+                    flag = false;
+                }
+
+            }
+        });
+
+//        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        String UserPackage = bundle.getString("package");
+//        databaseReference = database.getReference("image");
+//        databaseReference = databaseReference.child(UserPackage);
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    ImageUpload img = snapshot.getValue(ImageUpload.class);
+//                    likeCount.setText(Integer.toString(img.getLike()));
+//                    if (bundle.getBoolean("likeflag") == true) {
+//                        likeButton.setImageResource(R.drawable.like);
+//                    } else {
+//                        likeButton.setImageResource(R.drawable.likebefore);
+//                    }
+//
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                System.out.println("The read failed: " + databaseError.getCode());
+//            }
+//        });
     }
 
     private void initMenuFragment() {
@@ -192,6 +229,8 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
     public void onMenuItemLongClick(View clickedView, int position) {
         Toast.makeText(this, "Long clicked on position: " + position, Toast.LENGTH_SHORT).show();
     }
+
+
 
 //    private void colorize(Bitmap photo) {
 //        Palette palette = Palette.generate(photo);
