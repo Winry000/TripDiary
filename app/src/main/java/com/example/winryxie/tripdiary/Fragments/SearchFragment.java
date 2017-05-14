@@ -88,6 +88,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         UserPackage = currentFirebaseUser.getUid().toString();
         emailAddress = currentFirebaseUser.getEmail();
+        Log.i("DEBUG", "Email address is" + emailAddress);
         databaseReferenceUser = database.getReference("user");
         Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
         queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -95,15 +96,15 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    Log.i("DEBUG", user.getEmailAddress() + " name "+user.getName() +  "  sign " + user.getSignature() + " Sign "+ user.getUrl() +" CityNumber "+user.getCityNumber() + " diaryNumber" + user.getDiaryNumber());
+                    Log.i("DEBUG", user.getEmailAddress() + " name "+user.getName() +  ".sign-" + user.getSignature() + ".URL-"+ user.getUrl() +".CityNumber-"+user.getCityNumber() + ".diaryNumber-" + user.getDiaryNumber());
                     username.setText(user.getName());
-                    if(user.getSignature() != "")
-                        usersign.setText(user.getSignature());
-                    else usersign.setText("What do you think?");
+                    if(user.getSignature().equals(""))
+                        usersign.setText("What do you think?");
+                    else usersign.setText(user.getSignature());
                     userdiaryNo.setText(Integer.toString(user.getDiaryNumber()));
                     usercityNo.setText(Integer.toString(user.getCityNumber()));
                     usercountryNo.setText(Integer.toString(user.getCountryNumber()));
-                    if(user.url != ""){
+                    if(!user.url.equals("")){
                         Glide.with(getContext()).load(user.getUrl()).into(userProfile);
                     }
                 }
