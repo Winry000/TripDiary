@@ -37,6 +37,12 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.MyViewHold
             myIntent.putExtra("content", SearchFragment.imgList.get(getPosition()).content);
             myIntent.putExtra("url", SearchFragment.imgList.get(getPosition()).url);
             myIntent.putExtra("name", SearchFragment.imgList.get(getPosition()).name);
+            myIntent.putExtra("like", SearchFragment.imgList.get(getPosition()).like);
+            myIntent.putExtra("like", SearchFragment.imgList.get(getPosition()).like);
+            myIntent.putExtra("likeflag", SearchFragment.imgList.get(getPosition()).likeflag);
+            myIntent.putExtra("index",getPosition());
+                        
+
             context.startActivity(myIntent);
             //        int position = recyclerView.indexOfChild(v);
 //        Intent myIntent = new Intent(getActivity(), AbstractDetailActivity.class);

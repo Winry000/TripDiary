@@ -75,11 +75,11 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         }
         if (bundle.getBoolean("likeflag") == false) {
             likeButton.setImageResource(R.drawable.likebefore);
-            num = bundle.getInt("likes");
+            num = bundle.getInt("like");
             likeCount.setText(Integer.toString(num));
         } else {
             likeButton.setImageResource(R.drawable.like);
-            num = bundle.getInt("likes");
+            num = bundle.getInt("like");
             likeCount.setText(Integer.toString(num));
         }
 
@@ -88,12 +88,12 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             {
                 if (v == likeButton && flag == false) {
                    likeButton.setImageResource(R.drawable.like);
-                    num = bundle.getInt("likes") + 1;
+                    num = bundle.getInt("like") + 1;
                     likeCount.setText(Integer.toString(num));
                     flag = true;
                 } else if (v == likeButton && flag == true) {
                     likeButton.setImageResource(R.drawable.likebefore);
-                    num = bundle.getInt("likes");
+                    num = bundle.getInt("like");
                     likeCount.setText(Integer.toString(num));
                     flag = false;
                 }
@@ -104,7 +104,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
                         for(DataSnapshot imgSnapshot: dataSnapshot.getChildren()) {
 //                            ImageUpload img = imgSnapshot.getValue(ImageUpload.class);
                             if (count == bundle.getInt("index")) {
-                                imgSnapshot.getRef().child("likes").setValue(num);
+                                imgSnapshot.getRef().child("like").setValue(num);
                                 imgSnapshot.getRef().child("likeflag").setValue(flag);
                                 break;
                             }
