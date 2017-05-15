@@ -94,7 +94,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
     protected GoogleApiClient mGoogleApiClient;
     private String country;
     private String city;
-    private int oldCountryNumber;
 
     public static final String FB_STORAGE_PATH = "image/";
     public static final String FB_DATABASE_PATH = "image";
@@ -336,7 +335,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
 
                     //update country in user database
                     // get old country number;
-                    String emailAddress = FirebaseAuth.getInstance().getCurrentUser().getEmail();;
+                    String emailAddress = FirebaseAuth.getInstance().getCurrentUser().getEmail();
                     final FirebaseDatabase database = FirebaseDatabase.getInstance();
                     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                     UserPackage = currentFirebaseUser.getUid().toString();
@@ -350,9 +349,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 User user = snapshot.getValue(User.class);
+                                int oldCountryNumber;
+                                int currentDiaryNumber;
                                 oldCountryNumber = user.getCountryNumber();
                                 countryList = user.getCountryList();
+                                currentDiaryNumber = user.getDiaryNumber();
                                 //Log.e("DEBUG", "country is " + country);
+                                databaseReferenceUser.child(UserPackage).child("diaryNumber").setValue(currentDiaryNumber + 1);
                                 if(!countryList.containsKey(country)) {
                                     databaseReferenceUser.child(UserPackage).child("countryNumber").setValue(oldCountryNumber + 1);
                                     int initialnumber = 1;
@@ -370,6 +373,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
 
                         }
                     });
+
+
+
 
 
                 }

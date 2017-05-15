@@ -18,18 +18,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.winryxie.tripdiary.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
-
+import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
     private int num = 0;
     private String UserPackage;
     private DatabaseReference databaseReference;
+    private DatabaseReference databaseReferenceUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
 
         databaseReference = database.getReference("image");
         databaseReference = databaseReference.child(UserPackage);
+        databaseReferenceUser = database.getReference("user");
 
         final Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -101,15 +105,38 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
                     likeCount.setText(Integer.toString(num));
                     flag = false;
                 }
+
                 databaseReference.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         int count = 0;
                         for(DataSnapshot imgSnapshot: dataSnapshot.getChildren()) {
-//                            ImageUpload img = imgSnapshot.getValue(ImageUpload.class);
+///                            ImageUpload img = imgSnapshot.getValue(ImageUpload.class);
                             if (count == bundle.getInt("index")) {
                                 imgSnapshot.getRef().child("like").setValue(num);
                                 imgSnapshot.getRef().child("likeflag").setValue(flag);
+
+                                String emailAddress = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                                Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
+                                //Query queryUser = databaseReferenceUser.child(UserPackage);
+                                queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            User user = snapshot.getValue(User.class);
+                                            //Log.e("DEBUG", "country is " + country);
+                                            int likenumber = user.cityNumber;
+                                            Log.e("DEBUG", "like number is " + likenumber);
+                                            snapshot.getRef().child("cityNumber").setValue(likenumber + 1);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
                                 break;
                             }
                             count++;
