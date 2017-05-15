@@ -14,8 +14,10 @@ public class ImageUpload {
     public String diaryDate;
     public int like;
     public boolean likeflag;
+    public String country;
+    public String city;
 
-    public ImageUpload(String name, String content, String url, String location,double log, double lat, String diaryDate, int like, boolean likeflag) {
+    public ImageUpload(String name, String content, String url, String location, String country, String city, double log, double lat, String diaryDate, int like, boolean likeflag) {
         this.name = name;
         this.content = content;
         this.url = url;
@@ -25,6 +27,8 @@ public class ImageUpload {
         this.diaryDate = diaryDate;
         this.like = like;
         this.likeflag = likeflag;
+        this.city = city;
+        this.country = country;
     }
 
     public String getName() {
@@ -41,6 +45,11 @@ public class ImageUpload {
     public double getLat(){return lat;}
 
     public String getLocation(){return location;}
+
+    public String getCity(){return city;}
+
+    public String getCountry(){return country;}
+
     public String getDiaryDate(){return diaryDate;}
 
     public ImageUpload() {

@@ -88,19 +88,21 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         UserPackage = currentFirebaseUser.getUid().toString();
         emailAddress = currentFirebaseUser.getEmail();
-        Log.i("DEBUG", "Email address is" + emailAddress);
+
         databaseReferenceUser = database.getReference("user");
+
         Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
+        //Query queryUser = databaseReferenceUser.child(UserPackage);
         queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-                    Log.i("DEBUG", user.getEmailAddress() + " name "+user.getName() +  ".sign-" + user.getSignature() + ".URL-"+ user.getUrl() +".CityNumber-"+user.getCityNumber() + ".diaryNumber-" + user.getDiaryNumber());
+                    //Log.i("DEBUG", user.getEmailAddress() + " name "+user.getName() +  ".sign-" + user.getSignature() + ".URL-"+ user.getUrl() +".CityNumber-"+user.getCityNumber() + ".diaryNumber-" + user.getDiaryNumber());
                     username.setText(user.getName());
-                    if(user.getSignature().equals(""))
-                        usersign.setText("What do you think?");
-                    else usersign.setText(user.getSignature());
+                    if(!user.getSignature().equals(""))
+                        usersign.setText(user.getSignature());
+                    else usersign.setText("What do you think?");
                     userdiaryNo.setText(Integer.toString(user.getDiaryNumber()));
                     usercityNo.setText(Integer.toString(user.getCityNumber()));
                     usercountryNo.setText(Integer.toString(user.getCountryNumber()));

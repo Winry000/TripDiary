@@ -32,7 +32,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private EditText editTextRepassword;
     private EditText editTextName;
     private TextView toLoginText;
-    private StorageReference storageReference;
     private DatabaseReference databaseReference;
     public static final String FB_DATABASE_PATH = "user";
     private ProgressDialog progressDialog;
@@ -105,7 +104,8 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                             //start successful and start a new profil
                             User user = new User(name, email);
                             //save the imginfo to firedatabase
-                            String userId = databaseReference.push().getKey();
+                            //String userId = databaseReference.push().getKey();
+                            String userId = firebaseAuth.getCurrentUser().getUid();
                             databaseReference.child(userId).setValue(user);
 
                             Toast.makeText(SignupActivity.this, "Sign up successfully", Toast.LENGTH_SHORT).show();

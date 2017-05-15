@@ -27,8 +27,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.winryxie.tripdiary.GPSTracker;
 import com.example.winryxie.tripdiary.ImageUpload;
+import com.example.winryxie.tripdiary.Model.User;
 import com.example.winryxie.tripdiary.PlaceSearchDialog;
 import com.example.winryxie.tripdiary.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,8 +42,13 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -56,7 +63,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static android.app.Activity.RESULT_OK;
-
+import java.util.Map;
+import java.util.List;
+import  java.util.HashMap;
+import android.location.Geocoder;
+import android.location.Address;
+import java.util.Locale;
 /**
  * Created by winryxie on 5/4/17.
  */
@@ -65,7 +77,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
 
     private StorageReference storageReference;
     private DatabaseReference databaseReference;
-    private ImageView imageView;
+    private DatabaseReference countryDatabaseReference;
+    private DatabaseReference databaseReferenceUser;
     private EditText editText;
     private EditText editContent;
     private EditText editLocation;
@@ -79,6 +92,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
     private double currentlat = 0;
     private String location;
     protected GoogleApiClient mGoogleApiClient;
+    private String country;
+    private String city;
+    private int oldCountryNumber;
 
     public static final String FB_STORAGE_PATH = "image/";
     public static final String FB_DATABASE_PATH = "image";
@@ -89,6 +105,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
     private static final int PERMISSIONS_REQUEST_CODE = 1;
     private static final int NUMBER_OF_PERMISSIONS = 1;
     private String UserPackage;
+    private Map<String, Integer> countryList = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,8 +143,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
 
         View view = inflater.inflate(R.layout.camera,container,false);
         storageReference = FirebaseStorage.getInstance().getReference();
-        databaseReference = FirebaseDatabase.getInstance().getReference(FB_DATABASE_PATH);
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference(FB_DATABASE_PATH);
 
+        //countryDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Country");
         editText =(EditText) view.findViewById(R.id.text_diary);
         editContent = (EditText) view.findViewById(R.id.text_diary_content);
         editLocation = (EditText) view.findViewById(R.id.diary_location);
@@ -192,9 +211,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
             lat = place.getLatLng().latitude;
             log = place.getLatLng().longitude;
             location = place.getName().toString();
+            country = place.getLocale().getDisplayCountry();
+            Log.e("DEBUG", "place.getLocale().getCountry() is " + place.getLocale().getCountry());
+            city = place.getAddress().toString();
 
             Log.i("DEBUG", "Place details received: " + place.getName());
-
+            Log.i("DEBUG", "Place address: " + city);
             places.release();
         }
     };
@@ -217,12 +239,34 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
             case PLACE_PICKER_REQUEST:
                 if (resultCode == RESULT_OK) {
                     Place place = PlacePicker.getPlace(this.getContext(), data);
-                    Log.i("DEBUG", Double.toString(place.getLatLng().getLatitude()) + " " +Double.toString(place.getLatLng().getLongitude()));
+                    //Log.i("DEBUG", Double.toString(place.getLatLng().getLatitude()) + " " +Double.toString(place.getLatLng().getLongitude()));
                     log = place.getLatLng().getLongitude();
                     lat = place.getLatLng().getLatitude();
-                    location = place.getName().toString();
-                    editLocation.setText(location);
 
+                    LatLng coordinates = place.getLatLng(); // Get the coordinates from your place
+                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    try {
+                        List<Address> addresses = geocoder.getFromLocation(
+                                coordinates.getLatitude(),
+                                coordinates.getLongitude(),
+                                1); // Only retrieve 1 address
+                        Address address = addresses.get(0);
+
+                       // country = address.getCountryCode();
+                        country = address.getCountryName();
+                        Log.i("DEBUG", "country" + country);
+
+                    }catch (IOException e){
+
+                    }
+
+                    location = place.getName().toString();
+                    //country = place.getLocale().getDisplayCountry();
+                    //Log.e("DEBUG", "place.getLocale().getCountry() is " + place.getLocale().getCountry());
+                    city = place.getAddress().toString();
+                    editLocation.setText(location);
+                    Log.i("DEBUG", "Place details received: " + place.getName());
+                    Log.i("DEBUG", "Place address: " + city);
                 }
                 break;
             case REQUEST_CODE:
@@ -270,12 +314,50 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                     SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                     String formattedDate = df.format(c.getTime());
 
-                    ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), editLocation.getText().toString(), log,lat,formattedDate, 0, false);
+                    ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), editLocation.getText().toString(), country, city,log,lat,formattedDate, 0, false);
                     //save the imginfo to firedatabase
-
                     databaseReference = databaseReference.child(UserPackage);
                     String uploadId = databaseReference.push().getKey();
                     databaseReference.child(uploadId).setValue(imageupload);
+
+                    //update country in user database
+                    // get old country number;
+                    String emailAddress = FirebaseAuth.getInstance().getCurrentUser().getEmail();;
+                    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                    UserPackage = currentFirebaseUser.getUid().toString();
+
+                    databaseReferenceUser = database.getReference("user");
+
+                    Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
+                    //Query queryUser = databaseReferenceUser.child(UserPackage);
+                    queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                User user = snapshot.getValue(User.class);
+                                oldCountryNumber = user.getCountryNumber();
+                                countryList = user.getCountryList();
+                                //Log.e("DEBUG", "country is " + country);
+                                if(!countryList.containsKey(country)) {
+                                    databaseReferenceUser.child(UserPackage).child("countryNumber").setValue(oldCountryNumber + 1);
+                                    int initialnumber = 1;
+                                    databaseReferenceUser.child(UserPackage).child("countryList").child(country).setValue(initialnumber);
+                                }
+                                else{
+                                    //Log.e("DEBUG", "the number of country is " + countryList.get(country));
+                                    databaseReferenceUser.child(UserPackage).child("countryList").child(country).setValue(countryList.get(country) + 1);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
                 }
             })
                     .addOnFailureListener(new OnFailureListener() {
