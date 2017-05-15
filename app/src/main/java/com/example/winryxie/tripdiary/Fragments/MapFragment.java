@@ -34,10 +34,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.List;
 
 import static com.example.winryxie.tripdiary.Fragments.SearchFragment.imgList;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.*;
+import com.bumptech.glide.request.target.Target;
 
 /**
  * Created by winryxie on 5/4/17.
@@ -128,9 +130,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public void setUpMap() {
 
-        View marker = mInflater.inflate(R.layout.map_view_marker, null);
+        final View marker = mInflater.inflate(R.layout.map_view_marker, null);
         List<ImageUpload> imgMapList = imgList;
-
 
 //        ImageView imageView = (ImageView) marker.findViewById(R.id.num_txt);
 //        Glide.with(getContext()).load("").into(imageView);
@@ -138,22 +139,43 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 //        ImageView imageView = (ImageView) marker.findViewById(R.id.imageView2);
 //        Glide.with(getContext()).load("http://i.imgur.com/DvpvklR.png").into(imageView);
         for (int i = 0; i < imgMapList.size(); i++) {
-            double latitude = imgMapList.get(i).getLat();
-            double longitude = imgMapList.get(i).getLog();
-            String img_title = imgMapList.get(i).getName();
-            String img_url = imgMapList.get(i).getUrl();
+            final double latitude = imgMapList.get(i).getLat();
+            final double longitude = imgMapList.get(i).getLog();
+            final String img_title = imgMapList.get(i).getName();
+            final String img_url = imgMapList.get(i).getUrl();
 //            TextView textView = (TextView) marker.findViewById(R.id.num_txt);
 //            textView.setText(img_title);
-            ImageButton imageButton = (ImageButton) marker.findViewById(R.id.num_txt);
-            imageButton.setImageURI(Uri.parse("http://i.imgur.com/DvpvklR.png"));
+//            ImageButton imageButton = (ImageButton) marker.findViewById(R.id.num_txt);
+//            imageButton.setImageURI(Uri.parse(img_url));
+//
+            Glide.with(getContext())
+                    .load(img_url)
+                    .asBitmap()
+                    .listener(new RequestListener<String, Bitmap>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                            return false;
+                        }
 
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(latitude, longitude))
+                                    .title(img_title)
+                                    .snippet("Snippet")
+                                    .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker, resource)))
+                            );
+                            return true;
+                        }
+                    })
+                    .centerCrop()
+                    .preload();
 
-            googleMap.addMarker(new MarkerOptions()
+  /*          googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitude, longitude))
                     .title(img_title)
                     .snippet("Snippet")
-                    .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker)))); // transparent image
-
+                    .icon(BitmapDescriptorFactory.fromBitmap(createDrawableFromView(getContext(), marker, img_url)))); // transparent image*/
 
             // adding zoom for the lastest image
             double lat = imgMapList.get(imgMapList.size() - 1).getLat();
@@ -167,10 +189,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
 
-
     // Convert a view to bitmap
-    public static Bitmap createDrawableFromView(Context context, View view) {
+    public static Bitmap createDrawableFromView(Context context, View view, Bitmap bm) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
+        ImageView imageView = (ImageView) view.findViewById(R.id.map_photo);
+
+        //Glide.with(view.getContext()).load(url).into(imageView);
+        imageView.setImageBitmap(bm);
+
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         view.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
