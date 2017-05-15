@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v4.app.Fragment;
 
 import com.example.winryxie.tripdiary.Fragments.CameraFragment;
 import com.example.winryxie.tripdiary.Fragments.DiaryFragment;
@@ -44,6 +45,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_user);
+
         fragmentManager = getSupportFragmentManager();
         initToolbar();
         initMenuFragment();
@@ -168,6 +170,15 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case com.example.winryxie.tripdiary.ProfileActivity.UPDATE_PROFILE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    SearchFragment f = new SearchFragment();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_view, f).commit();
+                }
+        }
+
+
     }
 
     @Override

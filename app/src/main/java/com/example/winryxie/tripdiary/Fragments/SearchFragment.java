@@ -68,7 +68,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private CircleImageView userProfile;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search,container,false);
+        final View view = inflater.inflate(R.layout.search,container,false);
 
         username = (TextView) view.findViewById(R.id.UserProfileName);
         usersign = (TextView) view.findViewById(R.id.UserProfileSign);
@@ -107,7 +107,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
                     usercityNo.setText(Integer.toString(user.getCityNumber()));
                     usercountryNo.setText(Integer.toString(user.getCountryNumber()));
                     if(!user.url.equals("")){
-                        Glide.with(getContext()).load(user.getUrl()).into(userProfile);
+                        Glide.with(view.getContext()).load(user.getUrl()).into(userProfile);
                     }
                 }
                 recyclerView.setAdapter(adapter);

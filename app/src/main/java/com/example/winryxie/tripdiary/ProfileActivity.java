@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.winryxie.tripdiary.Fragments.SearchFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -77,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Uri headUri;
     public static final int REQUEST_CODE = 1234;
     private FirebaseUser currentFirebaseUser;
-
+    public static final int UPDATE_PROFILE_REQUEST = 5555;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +143,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page
+                //startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page
+                Intent myIntent = new Intent(ProfileActivity.this, MainUserActivity.class);
+                startActivityForResult(myIntent,UPDATE_PROFILE_REQUEST);
                 finish();
             }
         });
@@ -303,12 +306,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             });
 
         if (TextUtils.isEmpty(password) && TextUtils.isEmpty(repassword)) {
-            startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page
-            finish();
+
+            //Intent myIntent = new Intent(ProfileActivity.this, MainUserActivity.class);
+            //startActivityForResult(myIntent,UPDATE_PROFILE_REQUEST);
+            //startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page
+            Toast.makeText(this,"Profile updated successfully!",Toast.LENGTH_SHORT).show();
+            //finish();
+            return;
 
         }else{
             if(TextUtils.isEmpty(oldPassword)){
-                Toast.makeText(this,"Please enter your current password",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Please enter your old password",Toast.LENGTH_SHORT).show();
                 return;
             }
 // Get auth credentials from the user for re-authentication. The example below shows
@@ -331,11 +339,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                             finish();
                                         } else {
                                             Log.d("DEBUG", "Error password not updated");
+                                            Toast.makeText(getApplicationContext(),"Old password is incorrect!",Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
                             } else {
                                 Log.d("DEBUG", "Error auth failed");
+                                Toast.makeText(getApplicationContext(),"Old password is incorrect!",Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

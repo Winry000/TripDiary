@@ -191,10 +191,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public static Bitmap createDrawableFromView(Context context, View view, Bitmap bm) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ImageView imageView = (ImageView) view.findViewById(R.id.map_photo);
-
         //Glide.with(view.getContext()).load(url).into(imageView);
         imageView.setImageBitmap(bm);
-
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         view.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
