@@ -211,8 +211,22 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
             lat = place.getLatLng().latitude;
             log = place.getLatLng().longitude;
             location = place.getName().toString();
-            country = place.getLocale().getDisplayCountry();
-            Log.e("DEBUG", "place.getLocale().getCountry() is " + place.getLocale().getCountry());
+
+            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocation(
+                        lat,
+                        log,
+                        1); // Only retrieve 1 address
+                Address address = addresses.get(0);
+
+                // country = address.getCountryCode();
+                country = address.getCountryName();
+                Log.i("DEBUG", "country" + country);
+
+            }catch (IOException e){
+
+            }
             city = place.getAddress().toString();
 
             Log.i("DEBUG", "Place details received: " + place.getName());
