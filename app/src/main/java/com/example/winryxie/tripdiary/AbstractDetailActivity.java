@@ -46,6 +46,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
     private String UserPackage;
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceUser;
+    private String fromFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             diarydate.setText(bundle.getString("diaryDate"));
             diarylocation.setText(bundle.getString("location"));
             Glide.with(this).load(bundle.getString("url")).override(320, 300).into(imageView);
+            fromFragment = bundle.getString("from");
 
 
         }
@@ -259,13 +261,23 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         }
         mToolbar.setNavigationIcon(R.drawable.btn_back_toolbar);
 
+
+
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                switch (fromFragment){
+                    case "DiaryFragment":
+                        onBackPressed();
+                    case "AlbumsAdapter":
+                        Intent myIntent = new Intent(AbstractDetailActivity.this, MainUserActivity.class);
+                        startActivityForResult(myIntent,com.example.winryxie.tripdiary.ProfileActivity.UPDATE_PROFILE_REQUEST);
+                        finish();
+                }
+
             }
         });
-//        mToolBarTextView.setText("TripDiary");
+        
     }
 
 

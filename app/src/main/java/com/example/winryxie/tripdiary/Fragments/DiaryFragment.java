@@ -91,6 +91,7 @@ public class DiaryFragment extends Fragment {
                 myIntent.putExtra("diaryDate",imgList.get(position).getDiaryDate());
                 myIntent.putExtra("location",imgList.get(position).getLocation());
                 myIntent.putExtra("index",position);
+                myIntent.putExtra("from", "DiaryFragment");
                 startActivity(myIntent);
             }
         });
