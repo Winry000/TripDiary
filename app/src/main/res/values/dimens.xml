@@ -8,4 +8,6 @@
     <dimen name="card_margin">5dp</dimen>
     <dimen name="card_album_radius">0dp</dimen>
     <dimen name="user_profile_avatar_size">88dp</dimen>
+
+    <dimen name="activity_peek_margin">32dp</dimen>
 </resources>

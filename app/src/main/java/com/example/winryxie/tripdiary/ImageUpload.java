@@ -9,6 +9,7 @@ import java.util.HashMap;
  */
 
 public class ImageUpload {
+    public String id;
     public String name;
     public String content;
     public String url;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AnimatedPathView">
-        <attr name="strokeWidth" format="dimension" />
-        <attr name="strokeColor" format="color|reference" />
+        <attr name="strokeWidthxie" format="dimension" />
+        <attr name="strokeColorxie" format="color|reference" />
         <attr name="fillColor" format="color|reference" />
         <attr name="phase" format="float" />
         <attr name="duration" format="integer" />
@@ -20,4 +20,5 @@
     <declare-styleable name="BaseAppTheme">
         <attr name="actionBarIconColor" format="color" />
     </declare-styleable>
+
 </resources>

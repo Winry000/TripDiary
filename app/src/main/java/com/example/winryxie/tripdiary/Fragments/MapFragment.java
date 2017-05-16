@@ -34,10 +34,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
-import static com.example.winryxie.tripdiary.Fragments.SearchFragment.imgList;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.*;
 import com.bumptech.glide.request.target.Target;
+
+import static com.example.winryxie.tripdiary.Fragments.DiaryFragment.imgList;
+
 
 /**
  * Created by winryxie on 5/4/17.

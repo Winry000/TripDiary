@@ -83,114 +83,99 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
 
 
         }
+
+
         if (bundle.getBoolean("likeflag") == false) {
             likeButton.setImageResource(R.drawable.likebefore);
             num = bundle.getInt("like");
             likeCount.setText(Integer.toString(num));
-        } else {
+            likeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v)
+                {
+                    if (v == likeButton && flag == false) {
+                        likeButton.setImageResource(R.drawable.like);
+                        num = bundle.getInt("like") + 1;
+                        likeCount.setText(Integer.toString(num));
+                        flag = true;
+                    } else if (v == likeButton && flag == true) {
+                        likeButton.setImageResource(R.drawable.likebefore);
+                        num = bundle.getInt("like");
+                        likeCount.setText(Integer.toString(num));
+                        flag = false;
+                    }
+
+                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                for (DataSnapshot data: snapshot.getChildren()) {
+                                    if (data.getKey().equals(bundle.getString("id"))) {
+                                        DatabaseReference ref = databaseReference.child(snapshot.getKey()).child(data.getKey());
+                                        ref.child("like").setValue(num);
+                                        ref.child("likeflag").setValue(flag);
+                                    }
+                                }
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            System.out.println("The read failed: " + databaseError.getCode());
+                        }
+                    });
+
+
+                }
+            });
+        } else if (bundle.getBoolean("likeflag") == true) {
             likeButton.setImageResource(R.drawable.like);
             num = bundle.getInt("like");
             likeCount.setText(Integer.toString(num));
+            likeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v)
+                {
+                    flag = true;
+                    if (v == likeButton && flag == true) {
+                        likeButton.setImageResource(R.drawable.likebefore);
+                        num = bundle.getInt("like") - 1;
+                        likeCount.setText(Integer.toString(num));
+                        flag = false;
+                    } else if (v == likeButton && flag == false) {
+                        likeButton.setImageResource(R.drawable.like);
+                        num = bundle.getInt("like");
+                        likeCount.setText(Integer.toString(num));
+                        flag = true;
+                    }
+
+                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                for (DataSnapshot data: snapshot.getChildren()) {
+                                    if (data.getKey().equals(bundle.getString("id"))) {
+                                        DatabaseReference ref = databaseReference.child(snapshot.getKey()).child(data.getKey());
+                                        ref.child("like").setValue(num);
+                                        ref.child("likeflag").setValue(flag);
+                                    }
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            System.out.println("The read failed: " + databaseError.getCode());
+                        }
+                    });
+
+                }
+            });
         }
 
-        likeButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v)
-            {
-                if (v == likeButton && flag == false) {
-                    likeButton.setImageResource(R.drawable.like);
-                    num = bundle.getInt("like") + 1;
-                    likeCount.setText(Integer.toString(num));
-                    flag = true;
-                } else if (v == likeButton && flag == true) {
-                    likeButton.setImageResource(R.drawable.likebefore);
-                    num = bundle.getInt("like");
-                    likeCount.setText(Integer.toString(num));
-                    flag = false;
-                }
-
-                databaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int count = 0;
-                        for(DataSnapshot imgSnapshot: dataSnapshot.getChildren()) {
-///                            ImageUpload img = imgSnapshot.getValue(ImageUpload.class);
-                            if (count == bundle.getInt("index")) {
-                                imgSnapshot.getRef().child("like").setValue(num);
-                                imgSnapshot.getRef().child("likeflag").setValue(flag);
-
-                                String emailAddress = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                                Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
-                                //Query queryUser = databaseReferenceUser.child(UserPackage);
-                                queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                            User user = snapshot.getValue(User.class);
-                                            //Log.e("DEBUG", "country is " + country);
-                                            int likenumber = user.cityNumber;
-                                            Log.e("DEBUG", "like number is " + likenumber);
-                                            snapshot.getRef().child("cityNumber").setValue(likenumber + 1);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-
-                                break;
-                            }
-                            count++;
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-//                databaseReference.runTransaction(new Transaction.Handler() {
-//                    @Override
-//                    public Transaction.Result doTransaction(MutableData mutableData) {
-//                        Object set = mutableData.getValue();
-//                        ImageUpload img = mutableData.getValue(ImageUpload.class);
-//                        img.setLike(num);
-//                        return Transaction.success(mutableData);
-//                    }
-//                    @Override
-//                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-//
-//                    }
-//                });
-
-            }
-        });
-
-//        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        String UserPackage = bundle.getString("package");
-//        databaseReference = database.getReference("image");
-//        databaseReference = databaseReference.child(UserPackage);
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    ImageUpload img = snapshot.getValue(ImageUpload.class);
-//                    likeCount.setText(Integer.toString(img.getLike()));
-//                    if (bundle.getBoolean("likeflag") == true) {
-//                        likeButton.setImageResource(R.drawable.like);
-//                    } else {
-//                        likeButton.setImageResource(R.drawable.likebefore);
-//                    }
-//
-//                }
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                System.out.println("The read failed: " + databaseError.getCode());
-//            }
-//        });
     }
+
+
+
 
     private void initMenuFragment() {
         MenuParams menuParams = new MenuParams();
@@ -203,21 +188,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
     }
 
     private List<MenuObject> getMenuObjects() {
-        // You can use any [resource, bitmap, drawable, color] as image:
-        // item.setResource(...)
-        // item.setBitmap(...)
-        // item.setDrawable(...)
-        // item.setColor(...)
-        // You can set image ScaleType:
-        // item.setScaleType(ScaleType.FIT_XY)
-        // You can use any [resource, drawable, color] as background:
-        // item.setBgResource(...)
-        // item.setBgDrawable(...)
-        // item.setBgColor(...)
-        // You can use any [color] as text color:
-        // item.setTextColor(...)
-        // You can set any [color] as divider color:
-        // item.setDividerColor(...)
+
 
         List<MenuObject> menuObjects = new ArrayList<>();
 
@@ -258,15 +229,15 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (fromFragment){
-                    case "DiaryFragment":
-                        onBackPressed();
-                    case "AlbumsAdapter":
-                        Intent myIntent = new Intent(AbstractDetailActivity.this, MainUserActivity.class);
-                        startActivityForResult(myIntent,com.example.winryxie.tripdiary.ProfileActivity.UPDATE_PROFILE_REQUEST);
-                        finish();
-                }
-
+//                switch (fromFragment){
+//                    case "DiaryFragment":
+//                        onBackPressed();
+//                    case "AlbumsAdapter":
+//                        Intent myIntent = new Intent(AbstractDetailActivity.this, MainUserActivity.class);
+//                        startActivityForResult(myIntent,com.example.winryxie.tripdiary.ProfileActivity.UPDATE_PROFILE_REQUEST);
+//                        finish();
+//                }
+                onBackPressed();
             }
         });
         
@@ -349,3 +320,5 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
 ////        star.setStrokeColor(palette.getLightVibrantColor(res.getColor(R.color.default_light_vibrant)));
 //    }
 }
+
+

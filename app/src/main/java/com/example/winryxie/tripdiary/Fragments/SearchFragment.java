@@ -12,17 +12,17 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.Glide;
 import com.example.winryxie.tripdiary.AlbumsAdapter;
 import com.example.winryxie.tripdiary.ImageUpload;
+import com.example.winryxie.tripdiary.Model.User;
 import com.example.winryxie.tripdiary.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,21 +30,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.app.Activity.RESULT_OK;
 import static com.example.winryxie.tripdiary.Fragments.CameraFragment.REQUEST_CODE;
-import com.google.firebase.database.Query;
-import com.example.winryxie.tripdiary.Model.User;
-import android.widget.ImageView;
-import android.util.Log;
 
 /**
  * Created by winryxie on 5/4/17.
@@ -54,7 +52,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private ImageButton imageButton;
     public final static String CROP_IMAGE_ACTIVITY_REQUEST_CODE = "1234";
     private String UserPackage;
-    public static List<ImageUpload> imgList;
+    public static List<ImageUpload> imgList_search;
     private RecyclerView recyclerView;
     private AlbumsAdapter adapter;
     private DatabaseReference databaseReference;
@@ -76,7 +74,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         usercityNo = (TextView) view.findViewById(R.id.UserProfileCity);
         usercountryNo = (TextView) view.findViewById(R.id.UserProfileCountry);
         userProfile = (CircleImageView) view.findViewById(R.id.ivUserProfilePhoto);
-        imgList = new ArrayList<>();
+        imgList_search = new ArrayList<>();
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
@@ -121,15 +119,24 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
 
         databaseReference = database.getReference("image");
-        databaseReference = databaseReference.child(UserPackage);
-        adapter = new AlbumsAdapter(getContext(), imgList);
+       // databaseReference = databaseReference.child(UserPackage);
+        adapter = new AlbumsAdapter(getContext(), imgList_search);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                imgList_search.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    ImageUpload img = snapshot.getValue(ImageUpload.class);
-                    imgList.add(img);
+                    int count = 0;
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        if (count == 0) {
+                            ImageUpload img = data.getValue(ImageUpload.class);
+                            img.id = data.getKey();
+                            imgList_search.add(img);
+                            break;
+                        }
+                        count++;
+                    }
                 }
                 recyclerView.setAdapter(adapter);
             }
