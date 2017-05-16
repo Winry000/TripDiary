@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.winryxie.tripdiary.AbstractDetailActivity;
 import com.example.winryxie.tripdiary.GPSTracker;
 import com.example.winryxie.tripdiary.ImageUpload;
 import com.example.winryxie.tripdiary.Model.User;
@@ -98,6 +99,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
     public static final String FB_STORAGE_PATH = "image/";
     public static final String FB_DATABASE_PATH = "image";
     public static final int REQUEST_CODE = 1234;
+    public static final int DIARY_CREATED_CODE = 6666;
     private static final int PLACE_PICKER_REQUEST = 1;
     private static boolean isPickingPlace = false;
 
@@ -115,7 +117,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                 .addApi(Places.GEO_DATA_API)
                 .build();
 
-        Log.d("DEBUG", "onCreate");
+        Log.d("DEBUG", "CameraFragment on create");
     }
 
     @Override
@@ -157,6 +159,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
         pickPlaceButton.setOnClickListener(this);
         shareButton.setOnClickListener(this);
         UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+
+
+        Log.d("DEBUG", "CameraFragment view on create");
 
         editLocation.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -209,7 +214,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
             // Format details of the place for display and show it in a TextView.
             lat = place.getLatLng().latitude;
             log = place.getLatLng().longitude;
-            location = place.getName().toString();
+            //location = place.getName().toString();
 
             Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
             try {
@@ -228,8 +233,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
             }
             city = place.getAddress().toString();
 
-            Log.i("DEBUG", "Place details received: " + place.getName());
-            Log.i("DEBUG", "Place address: " + city);
             places.release();
         }
     };
@@ -267,19 +270,21 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
 
                        // country = address.getCountryCode();
                         country = address.getCountryName();
-                        Log.i("DEBUG", "country" + country);
 
+                        Log.i("DEBUG", "address.getAddressLine(0)"+ address.getAddressLine(0) + " 1 " + address.getAddressLine(1));
+
+                        //Log.i("DEBUG", "country" + country);
                     }catch (IOException e){
 
                     }
-
-                    location = place.getName().toString();
                     //country = place.getLocale().getDisplayCountry();
                     //Log.e("DEBUG", "place.getLocale().getCountry() is " + place.getLocale().getCountry());
-                    city = place.getAddress().toString();
+                    location = place.getAddress().toString();
+                    Log.i("DEBUG", "place.getName().toString() is "+ place.getName().toString());
+                    Log.i("DEBUG", "place.getAddress().toString()"+ location);
                     editLocation.setText(location);
-                    Log.i("DEBUG", "Place details received: " + place.getName());
-                    Log.i("DEBUG", "Place address: " + city);
+                    //Log.i("DEBUG", "Place details received: " + place.getName());
+                    //Log.i("DEBUG", "Place address: " + city);
                 }
                 break;
             case REQUEST_CODE:
@@ -323,15 +328,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                     dialog.dismiss();
                     Toast.makeText(getContext().getApplicationContext(), "Diary Uploaded", Toast.LENGTH_SHORT).show();
                     Calendar c = Calendar.getInstance();
-
                     SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                     String formattedDate = df.format(c.getTime());
-
-                    ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), editLocation.getText().toString(), country, city,log,lat,formattedDate, 0, false);
-                    //save the imginfo to firedatabase
-                    databaseReference = databaseReference.child(UserPackage);
-                    String uploadId = databaseReference.push().getKey();
-                    databaseReference.child(uploadId).setValue(imageupload);
 
                     //update country in user database
                     // get old country number;
@@ -339,7 +337,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                     final FirebaseDatabase database = FirebaseDatabase.getInstance();
                     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                     UserPackage = currentFirebaseUser.getUid().toString();
-
                     databaseReferenceUser = database.getReference("user");
 
                     Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
@@ -354,9 +351,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                                 oldCountryNumber = user.getCountryNumber();
                                 countryList = user.getCountryList();
                                 currentDiaryNumber = user.getDiaryNumber();
-                                //Log.e("DEBUG", "country is " + country);
+                                //Log.e("DEBUG", "currentDiaryNumber is " + currentDiaryNumber);
                                 databaseReferenceUser.child(UserPackage).child("diaryNumber").setValue(currentDiaryNumber + 1);
-                                if(!countryList.containsKey(country)) {
+                                if(countryList.equals(null) || !countryList.containsKey(country)) {
                                     databaseReferenceUser.child(UserPackage).child("countryNumber").setValue(oldCountryNumber + 1);
                                     int initialnumber = 1;
                                     databaseReferenceUser.child(UserPackage).child("countryList").child(country).setValue(initialnumber);
@@ -374,9 +371,23 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                         }
                     });
 
+                    ImageUpload imageupload = new ImageUpload(editText.getText().toString(), editContent.getText().toString(), taskSnapshot.getDownloadUrl().toString(), editLocation.getText().toString(), country, city,log,lat,formattedDate, 0, false);
+                    //save the imginfo to firedatabase
+                    databaseReference = databaseReference.child(UserPackage);
+                    String uploadId = databaseReference.push().getKey();
+                    databaseReference.child(uploadId).setValue(imageupload);
 
-
-
+                    Intent myIntent = new Intent(getActivity(), AbstractDetailActivity.class);
+                    myIntent.putExtra("content", editContent.getText().toString());
+                    myIntent.putExtra("url", taskSnapshot.getDownloadUrl().toString());
+                    myIntent.putExtra("name",  editText.getText().toString());
+                    myIntent.putExtra("diaryDate", formattedDate);
+                    myIntent.putExtra("location", editLocation.getText().toString());
+                    myIntent.putExtra("like", 0);
+                    myIntent.putExtra("likeflag", false);
+                    myIntent.putExtra("index",0);
+                    myIntent.putExtra("from", "CameraFragment");
+                    startActivity(myIntent);
 
                 }
             })

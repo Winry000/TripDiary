@@ -144,9 +144,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 //startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page
-                Intent myIntent = new Intent(ProfileActivity.this, MainUserActivity.class);
-                startActivityForResult(myIntent,UPDATE_PROFILE_REQUEST);
-                finish();
+                    Intent myIntent = new Intent(ProfileActivity.this, MainUserActivity.class);
+                    startActivityForResult(myIntent,UPDATE_PROFILE_REQUEST);
+                    finish();
             }
         });
     }

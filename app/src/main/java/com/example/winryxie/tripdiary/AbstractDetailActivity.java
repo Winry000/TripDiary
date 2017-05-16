@@ -224,17 +224,9 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         MenuObject close = new MenuObject();
         close.setResource(R.drawable.icn_close);
 
-        MenuObject send = new MenuObject("Edit Profile");
-        send.setResource(R.drawable.icn_1);
-
-        MenuObject like = new MenuObject("Like profile");
+        MenuObject like = new MenuObject("Share");
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.icn_2);
         like.setBitmap(b);
-
-        MenuObject addFr = new MenuObject("Add to friends");
-        BitmapDrawable bd = new BitmapDrawable(getResources(),
-                BitmapFactory.decodeResource(getResources(), R.drawable.icn_3));
-        addFr.setDrawable(bd);
 
         MenuObject addFav = new MenuObject("Add to favorites");
         addFav.setResource(R.drawable.icn_4);
@@ -243,9 +235,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         block.setResource(R.drawable.icn_5);
 
         menuObjects.add(close);
-        menuObjects.add(send);
         menuObjects.add(like);
-        menuObjects.add(addFr);
         menuObjects.add(addFav);
         menuObjects.add(block);
         return menuObjects;
@@ -259,6 +249,8 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+        mToolbar.setLogo(R.drawable.logotitle);
+        mToolbar.setNavigationIcon(R.drawable.btn_back_toolbar);
         mToolbar.setNavigationIcon(R.drawable.btn_back_toolbar);
 
 
@@ -316,8 +308,10 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
 
     @Override
     public void onMenuItemClick(View clickedView, int position) {
-        if (position == 5){
-
+        if (position == 3){
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(AbstractDetailActivity.this, MainActivity.class)); //Go back to home page
+            finish();
         }
 
     }

@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.example.winryxie.tripdiary.DiarySearchActivity">
+
+    <include layout="@layout/toolbar" />
+
 
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:id="@+id/cardview"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
         android:clickable="true"
@@ -17,14 +22,14 @@
         app:cardUseCompatPadding="true">
 
         <ImageView
-            android:id="@+id/cover"
+            android:id="@+id/cover_back"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:src="@drawable/sun"
+            android:src="@drawable/back_1"
             android:scaleType="fitXY"/>
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/cover_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#a5000000"
@@ -32,31 +37,17 @@
             android:gravity="center"
             android:maxLines="2"
             android:padding="10dp"
-            android:text="The World Under My Foot: My Trip Diary"
+            android:text="The World Around Me: The Best Photography"
             android:textColor="@android:color/white"
             android:textSize="15sp" />
     </android.support.v7.widget.CardView>
 
-    <ListView
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/cardview"
-        android:layout_marginTop="20dp"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@null"
-        android:id="@+id/listViewImage">
-    </ListView>
-
-    <com.nightonke.boommenu.BoomMenuButton
-        android:id="@+id/bmb"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        />
-
-
-</RelativeLayout>
+        android:clipToPadding="false"
+        android:clickable="true"
+        android:scrollbars="vertical" />
+</LinearLayout>
 

@@ -3,6 +3,7 @@ package com.example.winryxie.tripdiary;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,16 +35,15 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.MyViewHold
         @Override
         public void onClick(View v) {
             Intent myIntent = new Intent(context, AbstractDetailActivity.class);
-            myIntent.putExtra("content", SearchFragment.imgList.get(getPosition()).content);
-            myIntent.putExtra("url", SearchFragment.imgList.get(getPosition()).url);
-            myIntent.putExtra("name",  SearchFragment.imgList.get(getPosition()).name);
-            myIntent.putExtra("diaryDate", SearchFragment.imgList.get(getPosition()).getDiaryDate());
-            myIntent.putExtra("location", SearchFragment.imgList.get(getPosition()).getLocation());
-            myIntent.putExtra("name", SearchFragment.imgList.get(getPosition()).name);
-            myIntent.putExtra("like", SearchFragment.imgList.get(getPosition()).like);
-            myIntent.putExtra("like", SearchFragment.imgList.get(getPosition()).like);
-            myIntent.putExtra("likeflag", SearchFragment.imgList.get(getPosition()).likeflag);
+            myIntent.putExtra("content", albumList.get(getPosition()).content);
+            myIntent.putExtra("url", albumList.get(getPosition()).url);
+            myIntent.putExtra("name",  albumList.get(getPosition()).name);
+            myIntent.putExtra("diaryDate", albumList.get(getPosition()).getDiaryDate());
+            myIntent.putExtra("location", albumList.get(getPosition()).getLocation());
+            myIntent.putExtra("like", albumList.get(getPosition()).like);
+            myIntent.putExtra("likeflag", albumList.get(getPosition()).likeflag);
             myIntent.putExtra("index",getPosition());
+            Log.d("DEBUG", "index in albums adapter is " + getPosition());
             myIntent.putExtra("from", "AlbumsAdapter");
             context.startActivity(myIntent);
             //        int position = recyclerView.indexOfChild(v);

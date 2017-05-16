@@ -122,26 +122,17 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
         MenuObject send = new MenuObject("Friends");
         send.setResource(R.drawable.icn_1);
 
-        MenuObject like = new MenuObject("Edit profile");
-        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.icn_2);
-        like.setBitmap(b);
-
-        MenuObject addFr = new MenuObject("Add to friends");
+        MenuObject addFr = new MenuObject("Edit profile");
         BitmapDrawable bd = new BitmapDrawable(getResources(),
                 BitmapFactory.decodeResource(getResources(), R.drawable.icn_3));
         addFr.setDrawable(bd);
-
-        MenuObject addFav = new MenuObject("Share");
-        addFav.setResource(R.drawable.icn_4);
 
         MenuObject block = new MenuObject("Sign out");
         block.setResource(R.drawable.icn_5);
 
         menuObjects.add(close);
         menuObjects.add(send);
-        menuObjects.add(like);
         menuObjects.add(addFr);
-        menuObjects.add(addFav);
         menuObjects.add(block);
         return menuObjects;
     }
@@ -215,13 +206,11 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
             startActivity(new Intent(MainUserActivity.this, ProfileActivity.class)); //Go back to home page
             finish();
         }
-        if (position == 5){
+        if (position == 3){
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(MainUserActivity.this, MainActivity.class)); //Go back to home page
             finish();
         }
-
-
 
     }
 

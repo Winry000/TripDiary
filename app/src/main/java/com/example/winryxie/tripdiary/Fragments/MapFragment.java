@@ -104,7 +104,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     ImageUpload img = snapshot.getValue(ImageUpload.class);
-                    addPictureonMap(img);
+                   // addPictureonMap(img);
                 }
 
             }
@@ -206,11 +206,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return bitmap;
     }
 
-
-
-
     private void addPictureonMap(ImageUpload img){
-        Log.i("DEBUG", "image get from database " + img.getLog()+img.getLat());
+        //Log.i("DEBUG", "image get from database " + img.getLog()+img.getLat());
     }
 
 

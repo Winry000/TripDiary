@@ -19,7 +19,7 @@ public class User {
     public int cityNumber;
     public int countryNumber;
     public String signature;
-    public Map<String, Integer> countryList;
+    public Map<String, Integer> countryList = new HashMap<>();
 
 
     public User(String nickname, String emailAddress) {
