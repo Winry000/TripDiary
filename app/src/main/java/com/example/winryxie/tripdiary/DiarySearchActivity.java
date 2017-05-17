@@ -85,7 +85,7 @@ public class DiarySearchActivity extends AppCompatActivity implements OnMenuItem
         if (bundle.getString("from").equals("mostLike")) {
             coverImageView.setImageResource(R.drawable.mostliked);
             coverTextView.setText("The Best Photography by Me");
-            Query myTopPostsQuery = databaseReference.orderByChild("like").limitToLast(10);
+            Query myTopPostsQuery = databaseReference.orderByChild("like").limitToLast(4);
             myTopPostsQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -107,7 +107,7 @@ public class DiarySearchActivity extends AppCompatActivity implements OnMenuItem
         } else if(bundle.getString("from").equals("mostRecent")){
             coverImageView.setImageResource(R.drawable.mostrecent);
             coverTextView.setText("The Most Recent Photography by Me");
-            Query myTopPostsQuery = databaseReference.orderByChild("timestamp").limitToLast(10);
+            Query myTopPostsQuery = databaseReference.orderByChild("timestamp").limitToLast(4);
             myTopPostsQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

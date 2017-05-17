@@ -36,14 +36,16 @@ public class AlbumsAdapter extends RecyclerView.Adapter<AlbumsAdapter.MyViewHold
         public void onClick(View v) {
             Intent myIntent = new Intent(context, AbstractDetailActivity.class);
 
-            myIntent.putExtra("content", SearchFragment.imgList_search.get(getPosition()).content);
-            myIntent.putExtra("url", SearchFragment.imgList_search.get(getPosition()).url);
-            myIntent.putExtra("name", SearchFragment.imgList_search.get(getPosition()).name);
-            myIntent.putExtra("like", SearchFragment.imgList_search.get(getPosition()).like);
-            myIntent.putExtra("like", SearchFragment.imgList_search.get(getPosition()).like);
-            myIntent.putExtra("likeflag", SearchFragment.imgList_search.get(getPosition()).likeflag);
-            myIntent.putExtra("id", SearchFragment.imgList_search.get(getPosition()).id);
+            myIntent.putExtra("content", albumList.get(getPosition()).content);
+            myIntent.putExtra("url", albumList.get(getPosition()).url);
+            myIntent.putExtra("name", albumList.get(getPosition()).name);
+            myIntent.putExtra("like", albumList.get(getPosition()).like);
+            myIntent.putExtra("likeflag", albumList.get(getPosition()).likeflag);
+            myIntent.putExtra("location", albumList.get(getPosition()).location);
+            myIntent.putExtra("diaryDate", albumList.get(getPosition()).diaryDate);
+            myIntent.putExtra("id", albumList.get(getPosition()).id);
             myIntent.putExtra("index",getPosition());
+            myIntent.putExtra("from", "AlbumsAdapter");
 
             context.startActivity(myIntent);
         }

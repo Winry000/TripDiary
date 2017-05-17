@@ -56,6 +56,7 @@ public class FavoriateFragment extends Fragment implements View.OnClickListener 
                     }
                 }
                 adapter.notifyDataSetChanged();
+                //recyclerView.setAdapter(adapter);
             }
 
             @Override

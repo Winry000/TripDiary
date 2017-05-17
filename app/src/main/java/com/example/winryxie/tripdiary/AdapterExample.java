@@ -14,7 +14,7 @@ import com.example.winryxie.tripdiary.Fragments.FavoriateFragment;
 
 import java.util.List;
 
-import static com.example.winryxie.tripdiary.Fragments.DiaryFragment.imgList;
+//import static com.example.winryxie.tripdiary.Fragments..imgList;
 
 /**
  * Created by winryxie on 5/4/17.
@@ -40,14 +40,16 @@ public class AdapterExample extends RecyclerView.Adapter<AdapterExample.ViewHold
         @Override
         public void onClick(View v) {
             Intent myIntent = new Intent(context, AbstractDetailActivity.class);
-            myIntent.putExtra("content", FavoriateFragment.imgList_favor.get(getPosition()).content);
-            myIntent.putExtra("url", FavoriateFragment.imgList_favor.get(getPosition()).url);
-            myIntent.putExtra("name",FavoriateFragment.imgList_favor.get(getPosition()).name);
-            myIntent.putExtra("like", FavoriateFragment.imgList_favor.get(getPosition()).like);
-            myIntent.putExtra("like", FavoriateFragment.imgList_favor.get(getPosition()).like);
-            myIntent.putExtra("likeflag", FavoriateFragment.imgList_favor.get(getPosition()).likeflag);
+            myIntent.putExtra("content", favorList.get(getPosition()).content);
+            myIntent.putExtra("url", favorList.get(getPosition()).url);
+            myIntent.putExtra("name",favorList.get(getPosition()).name);
+            myIntent.putExtra("like", favorList.get(getPosition()).like);
+            myIntent.putExtra("likeflag", favorList.get(getPosition()).likeflag);
+            myIntent.putExtra("location", favorList.get(getPosition()).location);
+            myIntent.putExtra("diaryDate", favorList.get(getPosition()).diaryDate);
+            myIntent.putExtra("id",favorList.get(getPosition()).id);
+            myIntent.putExtra("from", "Adapterxample");
             myIntent.putExtra("index",getPosition());
-
 
             context.startActivity(myIntent);
         }
@@ -68,7 +70,7 @@ public class AdapterExample extends RecyclerView.Adapter<AdapterExample.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ImageUpload item = imgList.get(position);
+        ImageUpload item = favorList.get(position);
         holder.title.setText(item.getLocation());
         Glide.with(context).load(item.getUrl()).into(holder.favor);
 
@@ -77,8 +79,8 @@ public class AdapterExample extends RecyclerView.Adapter<AdapterExample.ViewHold
     @Override
     public int getItemCount() {
         int m = 0;
-        if (imgList != null) {
-            m = imgList.size();
+        if (favorList != null) {
+            m = favorList.size();
         }
         return m;
     }

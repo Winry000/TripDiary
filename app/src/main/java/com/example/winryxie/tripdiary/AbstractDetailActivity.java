@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,6 +45,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceUser;
     private String fromFragment;
+    private int currentLikenumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,12 +167,35 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
                         }
                     });
 
+
+
                 }
             });
         }
 
-    }
+/*        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String emailAddress = currentFirebaseUser.getEmail();
+        Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
 
+        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    User user = snapshot.getValue(User.class);
+
+                    currentLikenumber = user.getCountryNumber();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        queryUser.getRef().child("cityNumber").setValue(currentLikenumber + 1);*/
+
+    }
 
 
 
@@ -226,15 +251,15 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                switch (fromFragment){
-//                    case "DiaryFragment":
-//                        onBackPressed();
-//                    case "AlbumsAdapter":
-//                        Intent myIntent = new Intent(AbstractDetailActivity.this, MainUserActivity.class);
-//                        startActivityForResult(myIntent,com.example.winryxie.tripdiary.ProfileActivity.UPDATE_PROFILE_REQUEST);
-//                        finish();
-//                }
-                onBackPressed();
+                switch (fromFragment){
+                    case "CameraFragment":
+                        Intent myIntent2 = new Intent(AbstractDetailActivity.this, MainUserActivity.class);
+                        startActivity(myIntent2);
+                        finish();
+                    default:
+                        onBackPressed();
+                }
+
             }
         });
         

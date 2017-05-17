@@ -24,6 +24,11 @@ import com.example.winryxie.tripdiary.Fragments.FavoriateFragment;
 import com.example.winryxie.tripdiary.Fragments.MapFragment;
 import com.example.winryxie.tripdiary.Fragments.SearchFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
@@ -40,6 +45,9 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
     BottomBar bottomBar;
     private FragmentManager fragmentManager;
     private ContextMenuDialogFragment mMenuDialogFragment;
+    public static List<ImageUpload> imgList;
+    private DatabaseReference databaseReferenceImage;
+    private String UserPackage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,30 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
         fragmentManager = getSupportFragmentManager();
         initToolbar();
         initMenuFragment();
+
+        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        imgList = new ArrayList<ImageUpload>();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        databaseReferenceImage = database.getReference("image").child(UserPackage);
+
+        databaseReferenceImage.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                imgList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    ImageUpload img = snapshot.getValue(ImageUpload.class);
+                    img.id = snapshot.getKey();
+                    imgList.add(img);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
 
 //        bottomBar = BottomBar.attach(this,savedInstanceState);
         bottomBar = (BottomBar) findViewById(R.id.bottom_bar);

@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if(task.isSuccessful()) {
-//                            startActivity(new Intent(getApplicationContext(), MainUserActivity.class));
-//                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
-//                            databaseReference.keepSynced(true);
+                            startActivity(new Intent(getApplicationContext(), MainUserActivity.class));
+                            databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
+                            databaseReference.keepSynced(true);
                             firebaseAuth.addAuthStateListener(mAuthListener);
 
                         } else {

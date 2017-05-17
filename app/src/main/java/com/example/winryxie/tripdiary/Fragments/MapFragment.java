@@ -1,20 +1,24 @@
 package com.example.winryxie.tripdiary.Fragments;
 
+import android.Manifest;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.winryxie.tripdiary.ImageUpload;
 import com.example.winryxie.tripdiary.R;
@@ -38,7 +42,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.*;
 import com.bumptech.glide.request.target.Target;
 
-import static com.example.winryxie.tripdiary.Fragments.DiaryFragment.imgList;
+import static com.example.winryxie.tripdiary.MainUserActivity.imgList;
 
 
 /**
@@ -47,13 +51,12 @@ import static com.example.winryxie.tripdiary.Fragments.DiaryFragment.imgList;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private DatabaseReference databaseReference;
     MapView mMapView;
     private GoogleMap googleMap;
-    private ImageView map_imageView;
     private LayoutInflater mInflater;
 
-    private Context mContext;
+    private static final int PERMISSIONS_REQUEST_CODE = 1;
+    private static final int NUMBER_OF_PERMISSIONS = 1;
 
 
     @Override
@@ -91,32 +94,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 }
                 googleMap.setMyLocationEnabled(true);
 
-                setUpMap();
+                safeSetUpMap();
             }
         });
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        databaseReference = database.getReference(CameraFragment.FB_DATABASE_PATH);
-
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    ImageUpload img = snapshot.getValue(ImageUpload.class);
-                   // addPictureonMap(img);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
         return v;
     }
 
@@ -208,8 +189,57 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return bitmap;
     }
 
-    private void addPictureonMap(ImageUpload img){
-        //Log.i("DEBUG", "image get from database " + img.getLog()+img.getLat());
+
+
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                                     int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_CODE:
+                if (grantResults.length == NUMBER_OF_PERMISSIONS
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    setUpMap();
+                } else {
+                    showToastNeedPermissions();
+                }
+                break;
+            default:
+                showToastNeedPermissions();
+                break;
+        }
+    }
+
+    private void showToastNeedPermissions() {
+        Toast.makeText(this.getContext(), getString(R.string.need_permissions),
+                Toast.LENGTH_SHORT).show();
+    }
+
+
+    private boolean permissionNotGranted() {
+        return (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this.getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this.getActivity(), new String[] {
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
+        }, PERMISSIONS_REQUEST_CODE);
+    }
+
+    private void checkRuntimePermissions() {
+        if (permissionNotGranted()) {
+            requestPermission();
+        } else {
+            setUpMap();
+        }
+    }
+    private void safeSetUpMap() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkRuntimePermissions();
+        } else {
+            setUpMap();
+
+        }
     }
 
 

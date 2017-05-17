@@ -31,7 +31,8 @@ import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import android.util.Log;
+import static com.example.winryxie.tripdiary.MainUserActivity.imgList;
 
 /**
  * Created by winryxie on 5/4/17.
@@ -39,11 +40,12 @@ import java.util.List;
 
 public class DiaryFragment extends Fragment {
     private DatabaseReference databaseReference;
-    public static List<ImageUpload> imgList;
+    //public static List<ImageUpload> imgList;
     private ListView lv;
     private ImageListAdapter adapter;
     private ProgressDialog progressDialog;
     private String UserPackage;
+
 
     private BoomMenuButton bmb;
 
@@ -51,15 +53,15 @@ public class DiaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.diary, container, false);
         UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
-        imgList = new ArrayList<>();
+        //imgList = new ArrayList<>();
         lv = (ListView) view.findViewById(R.id.listViewImage);
-        progressDialog = new ProgressDialog(this.getContext());
+        /*progressDialog = new ProgressDialog(this.getContext());
         progressDialog.setMessage("Please wait，loading the diaries...");
-        progressDialog.show();
+        progressDialog.show();*/
 
         initializeBmbButton(view);
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+ /*       final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         databaseReference = database.getReference("image");
         databaseReference = databaseReference.child(UserPackage);
@@ -85,8 +87,13 @@ public class DiaryFragment extends Fragment {
                 progressDialog.dismiss();
                 System.out.println("The read failed: " + databaseError.getCode());
             }
-        });
+        });*/
 
+
+        final List<ImageUpload> imgMapList = imgList;
+
+        adapter = new ImageListAdapter(getActivity(), R.layout.diary_image, imgMapList);
+        lv.setAdapter(adapter);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -94,13 +101,17 @@ public class DiaryFragment extends Fragment {
                                     int position, long id) {
 
                 Intent myIntent = new Intent(getActivity(), AbstractDetailActivity.class);
-                myIntent.putExtra("content", imgList.get(position).content);
-                myIntent.putExtra("id", imgList.get(position).id);
-                myIntent.putExtra("url", imgList.get(position).url);
-                myIntent.putExtra("name", imgList.get(position).name);
-                myIntent.putExtra("like", imgList.get(position).like);
-                myIntent.putExtra("likeflag", imgList.get(position).likeflag);
+                myIntent.putExtra("content", imgMapList.get(position).content);
+                myIntent.putExtra("id", imgMapList.get(position).id);
+                Log.i("DEBUG", imgMapList.get(position).id);
+                myIntent.putExtra("url", imgMapList.get(position).url);
+                myIntent.putExtra("name", imgMapList.get(position).name);
+                myIntent.putExtra("like", imgMapList.get(position).like);
+                myIntent.putExtra("likeflag", imgMapList.get(position).likeflag);
+                myIntent.putExtra("location", imgMapList.get(position).location);
+                myIntent.putExtra("diaryDate", imgMapList.get(position).diaryDate);
                 myIntent.putExtra("index", position);
+                myIntent.putExtra("from", "DiaryFragment");
                 startActivity(myIntent);
             }
         });
