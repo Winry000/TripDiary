@@ -3,7 +3,6 @@ package com.example.winryxie.tripdiary;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,20 +17,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.winryxie.tripdiary.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
-import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +66,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         container = findViewById(R.id.container);
 
         databaseReference = database.getReference("image");
-        databaseReference = databaseReference.child(UserPackage);
+        //databaseReference = databaseReference.child(UserPackage);
         databaseReferenceUser = database.getReference("user");
 
         final Bundle bundle = getIntent().getExtras();
