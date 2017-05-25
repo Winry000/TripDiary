@@ -43,8 +43,6 @@ public class ImageListAdapter extends ArrayAdapter<ImageUpload> {
         TextView imageContent = (TextView) v.findViewById(R.id.tvimage_content);
         ImageView imageView = (ImageView) v.findViewById(R.id.imgView);
 
-
-
         imageTitle.setText(listImage.get(position).getName());
         imageContent.setText(listImage.get(position).getContent());
         Glide.with(context).load(listImage.get(position).getUrl()).override(320, 300).into(imageView);

@@ -43,6 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.winryxie.tripdiary.Fragments.CameraFragment.REQUEST_CODE;
+import com.example.winryxie.tripdiary.GPSTracker;
 
 /**
  * Created by winryxie on 5/4/17.
@@ -64,6 +65,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
     private TextView usercityNo;
     private TextView usercountryNo;
     private CircleImageView userProfile;
+    public static User user;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search,container,false);
@@ -95,7 +97,7 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    User user = snapshot.getValue(User.class);
+                    user = snapshot.getValue(User.class);
                     //Log.i("DEBUG", user.getEmailAddress() + " name "+user.getName() +  ".sign-" + user.getSignature() + ".URL-"+ user.getUrl() +".CityNumber-"+user.getCityNumber() + ".diaryNumber-" + user.getDiaryNumber());
                     username.setText(user.getName());
                     if(!user.getSignature().equals(""))
@@ -118,6 +120,23 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
         });
 
 
+
+        double currentlat = 0;
+        double currentlog = 0;
+
+        GPSTracker gps = new GPSTracker(this.getContext());
+        if(gps.canGetLocation()){
+            currentlat = gps.getLatitude(); // returns latitude
+            currentlog = gps.getLongitude(); // returns longitude
+        }
+
+        gps.stopUsingGPS();
+
+        final double latboundsup = currentlat + 0.3000;
+        final double latboundsdown = currentlat - 0.3000;
+        final double logboundsup =  currentlog + 0.3000;
+        final double logboundsdown =  currentlog - 0.3000;
+
         databaseReference = database.getReference("image");
        // databaseReference = databaseReference.child(UserPackage);
         adapter = new AlbumsAdapter(getContext(), imgList_search);
@@ -126,16 +145,19 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 imgList_search.clear();
+                int count = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    int count = 0;
                     for (DataSnapshot data : snapshot.getChildren()) {
-                        if (count == 0) {
+                        if(count == 50) break;
+                        Double log = data.child("log").getValue(Double.class);
+                        Double lat = data.child("lat").getValue(Double.class);
+                        if (lat <= latboundsup && lat >= latboundsdown && log >= logboundsdown && log <= logboundsup) {
                             ImageUpload img = data.getValue(ImageUpload.class);
                             img.id = data.getKey();
                             imgList_search.add(img);
-                            break;
+                            count++;
                         }
-                        count++;
+
                     }
                 }
                 recyclerView.setAdapter(adapter);

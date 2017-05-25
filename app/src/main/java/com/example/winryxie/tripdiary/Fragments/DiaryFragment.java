@@ -39,55 +39,16 @@ import static com.example.winryxie.tripdiary.MainUserActivity.imgList;
  */
 
 public class DiaryFragment extends Fragment {
-    private DatabaseReference databaseReference;
-    //public static List<ImageUpload> imgList;
+
     private ListView lv;
     private ImageListAdapter adapter;
-    private ProgressDialog progressDialog;
-    private String UserPackage;
-
-
     private BoomMenuButton bmb;
-
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.diary, container, false);
-        UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
-        //imgList = new ArrayList<>();
         lv = (ListView) view.findViewById(R.id.listViewImage);
-        /*progressDialog = new ProgressDialog(this.getContext());
-        progressDialog.setMessage("Please wait，loading the diaries...");
-        progressDialog.show();*/
 
         initializeBmbButton(view);
-
- /*       final FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-        databaseReference = database.getReference("image");
-        databaseReference = databaseReference.child(UserPackage);
-
-        adapter = new ImageListAdapter(getActivity(), R.layout.diary_image, imgList);
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                progressDialog.dismiss();
-                imgList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    ImageUpload img = snapshot.getValue(ImageUpload.class);
-                    img.id = snapshot.getKey();
-                    imgList.add(img);
-                }
-
-                lv.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                progressDialog.dismiss();
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });*/
 
 
         final List<ImageUpload> imgMapList = imgList;

@@ -31,11 +31,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
@@ -54,9 +49,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     MapView mMapView;
     private GoogleMap googleMap;
     private LayoutInflater mInflater;
-
-    private static final int PERMISSIONS_REQUEST_CODE = 1;
-    private static final int NUMBER_OF_PERMISSIONS = 1;
 
 
     @Override
@@ -94,7 +86,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 }
                 googleMap.setMyLocationEnabled(true);
 
-                safeSetUpMap();
+                setUpMap();
             }
         });
 
@@ -188,61 +180,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         return bitmap;
     }
-
-
-
-    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                                     int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_CODE:
-                if (grantResults.length == NUMBER_OF_PERMISSIONS
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    setUpMap();
-                } else {
-                    showToastNeedPermissions();
-                }
-                break;
-            default:
-                showToastNeedPermissions();
-                break;
-        }
-    }
-
-    private void showToastNeedPermissions() {
-        Toast.makeText(this.getContext(), getString(R.string.need_permissions),
-                Toast.LENGTH_SHORT).show();
-    }
-
-
-    private boolean permissionNotGranted() {
-        return (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this.getContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED);
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(this.getActivity(), new String[] {
-                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
-        }, PERMISSIONS_REQUEST_CODE);
-    }
-
-    private void checkRuntimePermissions() {
-        if (permissionNotGranted()) {
-            requestPermission();
-        } else {
-            setUpMap();
-        }
-    }
-    private void safeSetUpMap() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkRuntimePermissions();
-        } else {
-            setUpMap();
-
-        }
-    }
-
-
 
 
 }

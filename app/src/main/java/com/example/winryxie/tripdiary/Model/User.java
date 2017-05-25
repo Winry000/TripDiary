@@ -20,6 +20,7 @@ public class User {
     public int countryNumber;
     public String signature;
     public Map<String, Integer> countryList = new HashMap<>();
+    public Map<String, Boolean> favoriteList = new HashMap<>();
 
 
     public User(String nickname, String emailAddress) {
@@ -46,6 +47,7 @@ public class User {
     public String getPhoneNumber(){return phoneNumber;}
     public String getSignature(){return signature;}
     public Map<String, Integer> getCountryList(){return countryList;};
+    public Map<String, Boolean> getFavoriteList(){return favoriteList;};
     public User() {
 
     }

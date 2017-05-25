@@ -53,6 +53,9 @@ import com.google.firebase.auth.EmailAuthProvider;
 import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import static com.example.winryxie.tripdiary.MainUserActivity.UserPackage;
+import java.util.Map;
+import java.util.HashMap;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -68,17 +71,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private TextView Email;
     private CircleImageView ProfileImage;
     private StorageReference storageReference;
-    private DatabaseReference databaseReferenceUser;
     private String emailAddress;
-    public static final String FB_DATABASE_PATH = "user";
     public static final String FB_STORAGE_PATH = "profile/";
-    private ProgressDialog progressDialog;
-    private FirebaseAuth firebaseAuth;
-    private Query queryUser;
     private Uri headUri;
     public static final int REQUEST_CODE = 1234;
     private FirebaseUser currentFirebaseUser;
     public static final int UPDATE_PROFILE_REQUEST = 5555;
+    private FirebaseDatabase database;
+    private String userId = UserPackage;
+    private Query queryUser;
+    private DatabaseReference databaseReferenceUser;
+    public static final String FB_DATABASE_PATH = "user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +100,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         editTextOldPassword = (EditText) findViewById(R.id.profile_old_password);
         Email = (TextView) findViewById(R.id.profile_email);
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         emailAddress = currentFirebaseUser.getEmail();
         storageReference = FirebaseStorage.getInstance().getReference();
         databaseReferenceUser = database.getReference(FB_DATABASE_PATH);
         Email.setText(emailAddress);
+
         queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
         queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -125,6 +129,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
 
         SaveButton.setOnClickListener(this);
         ChangePhoto.setOnClickListener(this);
@@ -239,20 +244,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 final String profileurl = downloadUrl.toString();
                 dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Profile Image Uploaded", Toast.LENGTH_SHORT).show();
+                Map<String, Object> update = new HashMap();
 
-                queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            snapshot.getRef().child("url").setValue(profileurl);
-                        }
-                    }
+                update.put("/user/"+userId+"/url", profileurl);
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                database.getReference().updateChildren(update);
 
 
             }
@@ -288,25 +284,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             return;
         }
 
-        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        snapshot.getRef().child("nickname").setValue(nickname);
-                        snapshot.getRef().child("phonenumber").setValue(phonenumber);
-                        snapshot.getRef().child("signature").setValue(signature);
-                    }
-                }
+        Map<String, Object> updateUser = new HashMap();
 
+        updateUser.put("/user/"+userId+"/nickname", nickname);
+        updateUser.put("/user/"+userId+"/phoneNumber", phonenumber);
+        updateUser.put("/user/"+userId+"/signature", signature);
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+        database.getReference().updateChildren(updateUser);
 
-                }
-            });
 
         if (TextUtils.isEmpty(password) && TextUtils.isEmpty(repassword)) {
-
             //Intent myIntent = new Intent(ProfileActivity.this, MainUserActivity.class);
             //startActivityForResult(myIntent,UPDATE_PROFILE_REQUEST);
             //startActivity(new Intent(ProfileActivity.this, MainUserActivity.class)); //Go back to home page

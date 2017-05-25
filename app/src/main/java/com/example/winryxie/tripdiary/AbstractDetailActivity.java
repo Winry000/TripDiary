@@ -29,9 +29,18 @@ import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yalantis.contextmenu.lib.interfaces.OnMenuItemLongClickListener;
+import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.winryxie.tripdiary.Model.User;
+import java.util.Map;
+import java.util.HashMap;
+import android.util.Log;
+
+import static com.example.winryxie.tripdiary.Fragments.SearchFragment.user;
+import static com.example.winryxie.tripdiary.MainUserActivity.UserPackage;
+
 
 public class AbstractDetailActivity extends AppCompatActivity implements OnMenuItemClickListener, OnMenuItemLongClickListener {
 
@@ -39,13 +48,13 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
     public View container;
     private ContextMenuDialogFragment mMenuDialogFragment;
     private FragmentManager fragmentManager;
-    boolean flag = false;
     private int num = 0;
     private String UserPackage;
     private DatabaseReference databaseReference;
     private DatabaseReference databaseReferenceUser;
     private String fromFragment;
     private int currentLikenumber = 0;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +71,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         TextView diarylocation = (TextView) findViewById(R.id.diary_location);
         final ImageButton likeButton =(ImageButton) findViewById(R.id.like_button);
         final TextView likeCount = (TextView) findViewById(R.id.like_count);
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database = FirebaseDatabase.getInstance();
         UserPackage = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
 
         container = findViewById(R.id.container);
@@ -70,6 +79,7 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
         databaseReference = database.getReference("image");
         //databaseReference = databaseReference.child(UserPackage);
         databaseReferenceUser = database.getReference("user");
+        HashMap<String, Boolean> favoritePeople = new HashMap();
 
         final Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -79,88 +89,115 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             diarylocation.setText(bundle.getString("location"));
             Glide.with(this).load(bundle.getString("url")).override(320, 300).into(imageView);
             fromFragment = bundle.getString("from");
-
+            favoritePeople = (HashMap<String, Boolean>) getIntent().getSerializableExtra("favoriteBy");
+            num = bundle.getInt("like");
+            likeCount.setText(Integer.toString(num));
 
         }
 
-
-        if (bundle.getBoolean("likeflag") == false) {
-            likeButton.setImageResource(R.drawable.likebefore);
-            num = bundle.getInt("like");
-            likeCount.setText(Integer.toString(num));
-            likeButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v)
-                {
-                    if (v == likeButton && flag == false) {
-                        likeButton.setImageResource(R.drawable.like);
-                        num = bundle.getInt("like") + 1;
-                        likeCount.setText(Integer.toString(num));
-                        flag = true;
-                    } else if (v == likeButton && flag == true) {
-                        likeButton.setImageResource(R.drawable.likebefore);
-                        num = bundle.getInt("like");
-                        likeCount.setText(Integer.toString(num));
-                        flag = false;
-                    }
-
-                    databaseReference.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                for (DataSnapshot data: snapshot.getChildren()) {
-                                    if (data.getKey().equals(bundle.getString("id"))) {
-                                        DatabaseReference ref = databaseReference.child(snapshot.getKey()).child(data.getKey());
-                                        ref.child("like").setValue(num);
-                                        ref.child("likeflag").setValue(flag);
-                                    }
-                                }
-
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            System.out.println("The read failed: " + databaseError.getCode());
-                        }
-                    });
-
-
-                }
-            });
-        } else if (bundle.getBoolean("likeflag") == true) {
-            likeButton.setImageResource(R.drawable.like);
-            num = bundle.getInt("like");
-            likeCount.setText(Integer.toString(num));
-            likeButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v)
-                {
-                    flag = true;
-                    if (v == likeButton && flag == true) {
+        if(!favoritePeople.equals(null)){
+            if(favoritePeople.containsKey(UserPackage)){
+                likeButton.setImageResource(R.drawable.like);
+                likeButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v)
+                    {
                         likeButton.setImageResource(R.drawable.likebefore);
                         num = bundle.getInt("like") - 1;
                         likeCount.setText(Integer.toString(num));
-                        flag = false;
-                    } else if (v == likeButton && flag == false) {
-                        likeButton.setImageResource(R.drawable.like);
-                        num = bundle.getInt("like");
-                        likeCount.setText(Integer.toString(num));
-                        flag = true;
-                    }
 
-                    databaseReference.addValueEventListener(new ValueEventListener() {
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    for (DataSnapshot data: snapshot.getChildren()) {
+                                        if (data.getKey().equals(bundle.getString("id"))) {
+                                            DatabaseReference ref = databaseReference.child(snapshot.getKey()).child(data.getKey());
+                                            int likenumber = data.child("like").getValue(Integer.class);
+                                            Log.i("DEBUG", Integer.toString(likenumber));
+                                            ref.child("like").setValue(likenumber - 1);
+                                            ref.child("favoriteBy").child(UserPackage).removeValue();
+                                            updateLikeNumberMinus(snapshot.getKey(), data.getKey());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                System.out.println("The read failed: " + databaseError.getCode());
+                            }
+                        });
+
+                    }
+                });
+
+
+            }else{
+                likeButton.setImageResource(R.drawable.likebefore);
+                likeButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v)
+                    {
+                        likeButton.setImageResource(R.drawable.like);
+                        num = bundle.getInt("like") + 1;
+                        likeCount.setText(Integer.toString(num));
+
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    for (DataSnapshot data: snapshot.getChildren()) {
+                                        if (data.getKey().equals(bundle.getString("id"))) {
+                                            DatabaseReference ref = databaseReference.child(snapshot.getKey()).child(data.getKey());
+                                            int likenumber = data.child("like").getValue(Integer.class);
+                                            Log.i("DEBUG", Integer.toString(likenumber));
+                                            ref.child("like").setValue(likenumber + 1);
+                                            ref.child("favoriteBy").child(UserPackage).setValue(true);
+                                            updateLikeNumberPlus(snapshot.getKey(),data.getKey());
+                                            break;
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                System.out.println("The read failed: " + databaseError.getCode());
+                            }
+                        });
+
+
+                    }
+                });
+            }
+        }else{
+            likeButton.setImageResource(R.drawable.likebefore);
+            likeButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v)
+                {
+                    likeButton.setImageResource(R.drawable.like);
+                    num = bundle.getInt("like") + 1;
+                    likeCount.setText(Integer.toString(num));
+
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 for (DataSnapshot data: snapshot.getChildren()) {
                                     if (data.getKey().equals(bundle.getString("id"))) {
                                         DatabaseReference ref = databaseReference.child(snapshot.getKey()).child(data.getKey());
-                                        ref.child("like").setValue(num);
-                                        ref.child("likeflag").setValue(flag);
+                                        int likenumber = data.child("like").getValue(Integer.class);
+                                        Log.i("DEBUG", Integer.toString(likenumber));
+                                        ref.child("like").setValue(likenumber + 1);
+                                        ref.child("favoriteBy").child(UserPackage).setValue(true);
+                                        updateLikeNumberPlus(snapshot.getKey(),data.getKey());
+                                        break;
                                     }
                                 }
+
                             }
                         }
+
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                             System.out.println("The read failed: " + databaseError.getCode());
@@ -168,22 +205,29 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
                     });
 
 
-
                 }
             });
         }
 
-/*        FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        String emailAddress = currentFirebaseUser.getEmail();
-        Query queryUser = databaseReferenceUser.orderByChild("emailAddress").equalTo(emailAddress);
+
+    }
+
+
+    private void updateLikeNumberPlus(String userid, String iamgeid){
+
+        Query queryUser = databaseReferenceUser.orderByKey().equalTo(userid);
+        final String imageID = iamgeid;
 
         queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     User user = snapshot.getValue(User.class);
-
-                    currentLikenumber = user.getCountryNumber();
+                    currentLikenumber = user.getCityNumber();
+                    snapshot.child("cityNumber").getRef().setValue(currentLikenumber + 1);
+                    databaseReferenceUser.child(UserPackage).child("favoriteList").child(imageID).setValue(true);
+                   //databaseReferenceUser.child(userID).child("cityNumber").setValue(currentLikenumber + 1);
+                    //
                 }
             }
 
@@ -193,11 +237,33 @@ public class AbstractDetailActivity extends AppCompatActivity implements OnMenuI
             }
         });
 
-        queryUser.getRef().child("cityNumber").setValue(currentLikenumber + 1);*/
-
     }
 
+    private void updateLikeNumberMinus(String userid, String iamgeid){
 
+        Query queryUser = databaseReferenceUser.orderByKey().equalTo(userid);
+        final String imageID = iamgeid;
+        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    User user = snapshot.getValue(User.class);
+                    currentLikenumber = user.getCityNumber();
+                    snapshot.child("cityNumber").getRef().setValue(currentLikenumber - 1);
+
+                    //databaseReferenceUser.child(snapshot.getKey()).child("cityNumber").setValue(currentLikenumber - 1);
+                    databaseReferenceUser.child(UserPackage).child("favoriteList").child(imageID).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
 
     private void initMenuFragment() {
         MenuParams menuParams = new MenuParams();

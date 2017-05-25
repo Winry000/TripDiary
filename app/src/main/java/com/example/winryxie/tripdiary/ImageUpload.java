@@ -1,13 +1,18 @@
 package com.example.winryxie.tripdiary;
 
 import java.security.Timestamp;
+
+import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Exclude;
 import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by winryxie on 5/7/17.
  */
 
+@IgnoreExtraProperties
 public class ImageUpload {
     public String id;
     public String name;
@@ -22,6 +27,7 @@ public class ImageUpload {
     public String country;
     public String city;
     public HashMap<String, Object> timestampCreated;
+    public Map<String, Boolean> favoriteBy = new HashMap<>();
 
     public ImageUpload(String name, String content, String url, String location, String country, String city, double log, double lat, String diaryDate, int like, boolean likeflag) {
         this.name = name;
@@ -72,4 +78,5 @@ public class ImageUpload {
     public ImageUpload() {
 
     }
+    public Map<String, Boolean> getFavoriteBy(){return favoriteBy;};
 }

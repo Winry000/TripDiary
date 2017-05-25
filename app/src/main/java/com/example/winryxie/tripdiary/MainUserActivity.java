@@ -1,13 +1,18 @@
 package com.example.winryxie.tripdiary;
 
 
+import android.*;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -47,7 +52,9 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
     private ContextMenuDialogFragment mMenuDialogFragment;
     public static List<ImageUpload> imgList;
     private DatabaseReference databaseReferenceImage;
-    private String UserPackage;
+    public static String UserPackage;
+    private static final int PERMISSIONS_REQUEST_CODE = 1;
+    private static final int NUMBER_OF_PERMISSIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +98,7 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
                     SearchFragment f = new SearchFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_view, f).commit();
                 } else if (menuItemId == R.id.nav_map) {
-                    MapFragment f = new MapFragment();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_view, f).commit();
+                    safeOpenMap();
                 } else if (menuItemId == R.id.nav_camera) {
                     CameraFragment f = new CameraFragment();
                     getSupportFragmentManager().beginTransaction().replace(R.id.main_view, f).commit();
@@ -117,6 +123,63 @@ public class MainUserActivity extends AppCompatActivity  implements OnMenuItemCl
 //            }
 //        });
 
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                                     int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_CODE:
+                if (grantResults.length == NUMBER_OF_PERMISSIONS
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openMap();
+                } else {
+                    showToastNeedPermissions();
+                }
+                break;
+            default:
+                showToastNeedPermissions();
+                break;
+        }
+    }
+
+    private void showToastNeedPermissions() {
+        Toast.makeText(this, getString(R.string.need_permissions),
+                Toast.LENGTH_SHORT).show();
+    }
+
+
+    private boolean permissionNotGranted() {
+        return (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) || (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[] {
+                android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION
+        }, PERMISSIONS_REQUEST_CODE);
+    }
+
+    private void checkRuntimePermissions() {
+        if (permissionNotGranted()) {
+            requestPermission();
+        } else {
+            openMap();
+        }
+    }
+    private void safeOpenMap() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkRuntimePermissions();
+        } else {
+            openMap();
+
+        }
+    }
+
+    private void openMap()
+    {
+        MapFragment f = new MapFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_view, f).commit();
     }
 
     private void initMenuFragment() {
