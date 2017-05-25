@@ -60,6 +60,7 @@ import com.mapzen.places.api.ui.PlacePicker;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -183,6 +184,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                 .setLocationNameListener(new PlaceSearchDialog.LocationNameListener() {
                     @Override
                     public void locationName(String locationName) {
+                        editLocation.setText("");
                         editLocation.setText(locationName);
 
                     }
@@ -282,6 +284,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                     location = place.getAddress().toString();
                     Log.i("DEBUG", "place.getName().toString() is "+ place.getName().toString());
                     Log.i("DEBUG", "place.getAddress().toString()"+ location);
+                    editLocation.setText("");
                     editLocation.setText(location);
                     //Log.i("DEBUG", "Place details received: " + place.getName());
                     //Log.i("DEBUG", "Place address: " + city);
@@ -387,6 +390,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener,  G
                     myIntent.putExtra("likeflag", false);
                     myIntent.putExtra("index",0);
                     myIntent.putExtra("from", "CameraFragment");
+                    HashMap<String, Boolean> favoriteBy = new HashMap();
+                    myIntent.putExtra("favoriteBy", (Serializable) favoriteBy);
                     startActivity(myIntent);
 
                 }

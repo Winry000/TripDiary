@@ -29,6 +29,7 @@ import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.ButtonEnum;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import android.util.Log;
@@ -71,6 +72,7 @@ public class DiaryFragment extends Fragment {
                 myIntent.putExtra("likeflag", imgMapList.get(position).likeflag);
                 myIntent.putExtra("location", imgMapList.get(position).location);
                 myIntent.putExtra("diaryDate", imgMapList.get(position).diaryDate);
+                myIntent.putExtra("favoriteBy", (Serializable) imgMapList.get(position).favoriteBy);
                 myIntent.putExtra("index", position);
                 myIntent.putExtra("from", "DiaryFragment");
                 startActivity(myIntent);

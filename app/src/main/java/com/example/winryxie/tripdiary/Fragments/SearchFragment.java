@@ -132,10 +132,10 @@ public class SearchFragment extends Fragment implements View.OnClickListener{
 
         gps.stopUsingGPS();
 
-        final double latboundsup = currentlat + 0.3000;
-        final double latboundsdown = currentlat - 0.3000;
-        final double logboundsup =  currentlog + 0.3000;
-        final double logboundsdown =  currentlog - 0.3000;
+        final double latboundsup = currentlat + 0.5000;
+        final double latboundsdown = currentlat - 0.5000;
+        final double logboundsup =  currentlog + 0.5000;
+        final double logboundsdown =  currentlog - 0.5000;
 
         databaseReference = database.getReference("image");
        // databaseReference = databaseReference.child(UserPackage);

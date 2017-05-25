@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.winryxie.tripdiary.Fragments.FavoriateFragment;
 
+import java.io.Serializable;
 import java.util.List;
 
 //import static com.example.winryxie.tripdiary.Fragments..imgList;
@@ -48,6 +49,7 @@ public class AdapterExample extends RecyclerView.Adapter<AdapterExample.ViewHold
             myIntent.putExtra("location", favorList.get(getPosition()).location);
             myIntent.putExtra("diaryDate", favorList.get(getPosition()).diaryDate);
             myIntent.putExtra("id",favorList.get(getPosition()).id);
+            myIntent.putExtra("favoriteBy", (Serializable) favorList.get(getPosition()).favoriteBy);
             myIntent.putExtra("from", "Adapterxample");
             myIntent.putExtra("index",getPosition());
 
